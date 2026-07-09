@@ -1,0 +1,2 @@
+backend - laravel
+frontend - nextJS
