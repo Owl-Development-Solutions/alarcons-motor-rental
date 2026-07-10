@@ -65,6 +65,45 @@ php artisan migrate
 php artisan serve
 ```
 
+# REST API
+
+## Authentication
+
+| Method | Endpoint |
+|---------|----------|
+| POST | `/api/v1/register` |
+| POST | `/api/v1/login` |
+
+
+# Sample Request Payloads
+
+## Register
+
+```json
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "username": "customer",
+    "email": "customer@rental.com",
+    "phone_number": "09234115672",
+    "address": "Lapu-lapu cebu",
+    "password": "12345678",
+    "password_confirmation": "12345678"
+}
+```
+
+---
+
+## Login
+
+```json
+{
+  "username": "customer",
+  "password": "12345678"
+}
+```
+
+
 ### Frontend (Next.js)
 
 ```bash
@@ -74,6 +113,10 @@ npm run dev
 ```
 
 ## Progress Notes
+
+
+:white_check_mark: [Backend] Done with the register and login module July 10, 2026
+
 
 - _Add dated notes here as you build each feature._
 
