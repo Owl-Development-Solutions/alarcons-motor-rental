@@ -13,12 +13,38 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+
+            //Personal Information
+            $table->string('first_name');
+            $table->string('middle_name')->nullable();
+            $table->string('last_name');
+            $table->date('birth_date')->nullable();
+            $table->string('gender')->nullable();
+
+            //Contact Information
+            $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('phone_number');
+            $table->text('address');
+
+            //Drivers License
+            $table->string('drivers_license_number')->unique()->nullable();
+            $table->date('license_expiry')->nullable();
+            $table->string('license_image')->nullable();
+
+            //Authentication
             $table->string('password');
             $table->rememberToken();
+
+            //Roles can be customer, admin, sales
+            $table->string('role')->default('customer');
+
+            //Status
+            $table->boolean('is_verified')->default(false);
+            $table->boolean('is_active')->default(true);
+
             $table->timestamps();
+
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
