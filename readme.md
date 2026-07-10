@@ -1,4 +1,4 @@
-# Vehicle Booking System
+# Alarcon Car Rental Booking System
 
 A booking platform with separate flows for **motor** and **car** rentals/bookings, built with a Laravel backend (API) and a Next.js frontend.
 
