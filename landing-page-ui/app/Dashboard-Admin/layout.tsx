@@ -23,6 +23,7 @@ import {
 
 const navigation = [
   { name: "Dashboard", href: "/Dashboard-Admin", icon: LayoutDashboard },
+  { name: "Add Vehicle", href: "/Dashboard-Admin/vehicles/add", icon: Car },
   { name: "Vehicle Records", href: "/Dashboard-Admin/vehicles", icon: Car },
   { name: "Booking Records", href: "/Dashboard-Admin/bookings", icon: Calendar },
   { name: "Customers", href: "/Dashboard-Admin/customers", icon: Users },
@@ -64,8 +65,8 @@ export default function DashboardLayout({
               <Image
                 src="/car1.jpg"
                 alt="JE Cebu Tours Logo"
-                width={32}
-                height={32}
+                width={40}
+                height={40}
                 className="rounded-lg object-cover"
               />
               <span className="text-lg font-bold text-gray-900 dark:text-white">
