@@ -3,11 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const images = ["/pic1.2.jpg", "/car1.jpg"];
 
   useEffect(() => {
@@ -23,6 +29,22 @@ export default function Home() {
 
   const goToNext = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    // Hardcoded admin credentials (temporary until backend is ready)
+    if (email === "admin@jercebutours.com" && password === "admin123") {
+      setSuccess("Login successful! Redirecting to dashboard...");
+      setTimeout(() => {
+        router.push("/Dashboard-Admin");
+      }, 1500);
+    } else {
+      setError("Invalid email or password");
+    }
   };
 
   return (
@@ -84,13 +106,17 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-                  Premium Motor Rental
+                  Premium Motor Rental and Car
                   <span className="block text-orange-600 dark:text-orange-400">Services</span>
                 </h1>
                 <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Experience the freedom of the road with our top-quality motor rentals. 
-                  Whether you need a vehicle for business, leisure, or adventure, we have 
-                  the perfect ride for you.
+                  Your Trusted Partner on Every Journey.
+                </p>
+                <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                  From daily commutes to weekend adventures, our premium rental services offer dependable motorcycles and cars tailored to your needs. Enjoy flexible rental options, affordable pricing, and outstanding customer service every step of the way.
+                </p>
+                <p className="text-lg font-semibold text-orange-600 dark:text-orange-400 leading-relaxed">
+                  Reliable. Affordable. Always Ready.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
@@ -197,7 +223,7 @@ export default function Home() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white dark:bg-slate-700 p-6 rounded-xl shadow-lg">
-                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">500+</div>
+                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">18+</div>
                   <div className="text-gray-600 dark:text-gray-300">Vehicles</div>
                 </div>
                 <div className="bg-white dark:bg-slate-700 p-6 rounded-xl shadow-lg">
@@ -205,7 +231,7 @@ export default function Home() {
                   <div className="text-gray-600 dark:text-gray-300">Happy Customers</div>
                 </div>
                 <div className="bg-white dark:bg-slate-700 p-6 rounded-xl shadow-lg">
-                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">5+</div>
+                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">1+</div>
                   <div className="text-gray-600 dark:text-gray-300">Years Experience</div>
                 </div>
                 <div className="bg-white dark:bg-slate-700 p-6 rounded-xl shadow-lg">
@@ -339,7 +365,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2026 Alarcons Motor Rental and JE Cebu Tours. All rights reserved.</p>
+            <p>&copy; 2025 Alarcons Motor Rental and JE Cebu Tours. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -358,35 +384,23 @@ export default function Home() {
               </svg>
             </button>
 
-            {/* Toggle */}
-            <div className="flex mb-6 bg-gray-100 dark:bg-slate-700 rounded-lg p-1">
-              <button
-                onClick={() => setIsLogin(true)}
-                className={`flex-1 py-2 px-4 rounded-md font-semibold transition-all ${
-                  isLogin
-                    ? "bg-orange-600 text-white shadow"
-                    : "text-gray-600 dark:text-gray-300 hover:text-orange-600"
-                }`}
-              >
-                Login
-              </button>
-              <button
-                onClick={() => setIsLogin(false)}
-                className={`flex-1 py-2 px-4 rounded-md font-semibold transition-all ${
-                  !isLogin
-                    ? "bg-orange-600 text-white shadow"
-                    : "text-gray-600 dark:text-gray-300 hover:text-orange-600"
-                }`}
-              >
-                Sign Up
-              </button>
-            </div>
-
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              {isLogin ? "Welcome Back" : "Create Account"}
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+              {isLogin ? "Login" : "Create Account"}
             </h2>
 
-            <form className="space-y-4">
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                {success}
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="space-y-4">
               {!isLogin && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -405,6 +419,8 @@ export default function Home() {
                 </label>
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   placeholder="Enter your email"
                 />
@@ -415,6 +431,8 @@ export default function Home() {
                 </label>
                 <input
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   placeholder="Enter your password"
                 />
