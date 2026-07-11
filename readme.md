@@ -43,9 +43,9 @@ project-root/
   - [ ] Export (CSV/Excel/PDF)
   - [ ] Filter by date range, vehicle type
 - [ ] **Vehicle Management (Car/Motor)**
-  - [ ] Add/edit car details
-  - [ ] Add/edit motor details
-  - [ ] Upload images
+  - [x] Add/edit car details
+  - [x] Add/edit motor details
+  - [x] Upload images
   - [ ] Set availability/status
 - [ ] **Admin Settings**
   - [ ] Manage admin users/roles
