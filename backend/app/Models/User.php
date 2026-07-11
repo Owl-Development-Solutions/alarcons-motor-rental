@@ -63,5 +63,29 @@ class User extends Authenticatable
         ];
     }
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+ 
+    public function reviewedPayments()
+    {
+        return $this->hasMany(Payment::class, 'reviewed_by');
+    }
+ 
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+ 
+    public function isCustomer(): bool
+    {
+        return $this->role === self::ROLE_CUSTOMER;
+    }
+ 
+    public function getFullNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->middle_name} {$this->last_name}");
+    }
 
 }

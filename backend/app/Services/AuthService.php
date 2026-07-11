@@ -51,17 +51,17 @@ class AuthService
 
     public function login(array $credentials): array
     {
-        $user = User::where('username', $credentials['username'])->first();
+        $user = User::where('email', $credentials['email'])->first();
 
         if(!$user || !Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
-                'username' => ['The provided credentials are incorrect']
+                'email' => ['The provided credentials are incorrect']
             ]);
         }
 
         if(!$user->is_active) {
             throw ValidationException::withMessages([
-                'username' => ['This account has been deactivated']
+                'email' => ['This account has been deactivated']
             ]);
         }
 

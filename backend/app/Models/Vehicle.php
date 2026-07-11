@@ -9,25 +9,64 @@ class Vehicle extends Model
 {
     use HasFactory;
 
+    public const STATUS_AVAILABLE = 'available';
+    public const STATUS_RESERVED = 'reserved';
+    public const STATUS_MAINTENANCE = 'maintenance';
+    public const STATUS_UNAVAILABLE = 'unavailable';
+
+
     protected $fillable = [
-        'name',
-        'brand',
+        'make',
         'model',
         'year',
-        'type',
+        'plate_number',
+        'vin',
+        'category',
         'transmission',
+        'vehicle_type',
         'fuel_type',
         'seats',
+        'doors',
         'color',
-        'plate_number',
-        'price_per_day',
-        'description',
-        'availability',
+        'engine_displacement_cc',
+        'mileage',
+        'daily_rate',
+        'currency',
         'status',
-        'image',
+        'features',
+        'images',
+        'insurance'
     ];
 
-    protected $casts = [
-        'price_per_day' => 'decimal:2',
-    ];
+
+
+    public function casts(): array
+    {
+        return [
+            'daily_rate'    => 'decimal:2',
+            'features'      => 'array',
+            'images'        => 'array',
+            'insurance'     => 'array'
+        ];
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('status', self::STATUS_AVAILABLE);
+    }
+
+    public function markReserved(): void
+    {
+        $this->update(['status' => self::STATUS_RESERVED]);
+    }
+ 
+    public function markAvailable(): void
+    {
+        $this->update(['status' => self::STATUS_AVAILABLE]);
+    }
 }
