@@ -221,7 +221,8 @@ export default function VehiclesPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div>
             <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-4 drop-shadow-lg">Our Vehicle Fleet</h1>
-            <p className="text-sm md:text-xl text-white/95 drop-shadow-md">Quality vehicles, affordable prices, and dependable service for every journey.</p>
+            <p className="text-sm md:text-xl text-white/95 drop-shadow-md font-bold">Your Trusted Partner on Every Journey.</p>
+            <p className="text-sm md:text-xl text-white/95 drop-shadow-md mt-2">From daily commutes to weekend adventures, our premium rental services offer dependable motorcycles and cars tailored to your needs. Enjoy flexible rental options, affordable pricing, and outstanding customer service every step of the way.</p>
           </div>
         </div>
       </div>

@@ -112,10 +112,10 @@ export default function Home() {
                   Premium Motor Rental and Car
                   <span className="block text-orange-600 dark:text-orange-400">Services</span>
                 </h1>
-                <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-lg text-white leading-relaxed">
                   Your Trusted Partner on Every Journey.
                 </p>
-                <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-lg text-white leading-relaxed">
                   From daily commutes to weekend adventures, our premium rental services offer dependable motorcycles and cars tailored to your needs. Enjoy flexible rental options, affordable pricing, and outstanding customer service every step of the way.
                 </p>
                 <p className="text-lg font-semibold text-orange-600 dark:text-orange-400 leading-relaxed">
@@ -125,7 +125,7 @@ export default function Home() {
                   <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                     Book Now
                   </button>
-                  <button className="px-8 py-3 border-2 border-orange-600 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-800 font-semibold rounded-lg transition-colors">
+                  <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                     Learn More
                   </button>
                 </div>
