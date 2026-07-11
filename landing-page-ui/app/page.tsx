@@ -81,6 +81,9 @@ export default function Home() {
               <Link href="#concern" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
                 Concern
               </Link>
+              <Link href="/vehicles" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
+                List Of Vehicles
+              </Link>
               <button 
                 onClick={() => setIsModalOpen(true)}
                 className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-colors"
