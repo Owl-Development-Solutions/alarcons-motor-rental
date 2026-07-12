@@ -22,14 +22,14 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/Dashboard-Admin", icon: LayoutDashboard },
-  { name: "Vehicle Records", href: "/Dashboard-Admin/vehicles", icon: Car },
-  { name: "Booking Records", href: "/Dashboard-Admin/bookings", icon: Calendar },
-  { name: "Customers", href: "/Dashboard-Admin/customers", icon: Users },
-  { name: "Concerns", href: "/Dashboard-Admin/concerns", icon: MessageSquare },
-  { name: "Notifications", href: "/Dashboard-Admin/notifications", icon: Bell },
-  { name: "Profile", href: "/Dashboard-Admin/profile", icon: User },
-  { name: "Settings", href: "/Dashboard-Admin/settings", icon: Settings },
+  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Vehicle Records", href: "/admin/vehicles", icon: Car },
+  { name: "Booking Records", href: "/admin/bookings", icon: Calendar },
+  { name: "Customers", href: "/admin/customers", icon: Users },
+  { name: "Concerns", href: "/admin/concerns", icon: MessageSquare },
+  { name: "Notifications", href: "/admin/notifications", icon: Bell },
+  { name: "Profile", href: "/admin/profile", icon: User },
+  { name: "Settings", href: "/admin/settings", icon: Settings },
   { name: "Logout", href: "/", icon: LogOut },
 ];
 
