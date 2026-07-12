@@ -40,7 +40,7 @@ export default function Home() {
     if (email === "admin@jercebutours.com" && password === "admin123") {
       setSuccess("Login successful! Redirecting to dashboard...");
       setTimeout(() => {
-        router.push("/Dashboard-Admin");
+        router.push("/admin");
       }, 1500);
     } else {
       setError("Invalid email or password");

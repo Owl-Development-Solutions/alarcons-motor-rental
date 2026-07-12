@@ -59,7 +59,7 @@ class VehicleService
             $query->whereNotIn('id', $bookedVehicleIds);
         }
 
-        return $query->latest()->paginate($filters['per_page' ?? 15]);
+        return $query->latest()->paginate($filters['per_page'] ?? 15);
     }
 
     public function getVehicle(int $vehicleId): Vehicle

@@ -13,31 +13,22 @@ return new class extends Migration
     {
         Schema::create('vehicles', function(Blueprint $table) {
             $table->id();
-            $table->string('make');
+            $table->string('name');
+            $table->string('brand');
             $table->string('model');
-            $table->unsignedSmallInteger('year');
-            $table->string('vehicle_type');
-            $table->string('plate_number')->unique()->nullable();
-            $table->string('vin')->unique()->nullable();
-            $table->string('category');
+            $table->string('year');
+            $table->string('type');
             $table->string('transmission');
             $table->string('fuel_type');
-            $table->unsignedTinyInteger('seats')->default(5);
-            $table->unsignedTinyInteger('doors')->default(4);
-            $table->unsignedInteger('engine_displacement_cc')->nullable();
-            $table->string('color');
-            $table->unsignedInteger('mileage')->default(0);
-            $table->decimal('daily_rate', 10, 2);
-            $table->char('currency', 3)->default('PHP');
-            $table->string('status');
-            
-            // Simplified fields
-            $table->json('features')->nullable();
-            $table->json('images')->nullable();
-            $table->json('insurance')->nullable();
-
+            $table->string('seats')->nullable();
+            $table->string('color')->nullable();
+            $table->string('plate_number')->unique();
+            $table->decimal('price_per_day', 10, 2);
+            $table->text('description')->nullable();
+            $table->string('availability')->default('available');
+            $table->string('status')->default('active');
+            $table->string('image')->nullable();
             $table->timestamps();
-        
         });
     }
 

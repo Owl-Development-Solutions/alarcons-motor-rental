@@ -39,10 +39,16 @@ export default function VehicleRecordsPage() {
 
   // Fetch vehicles from backend on component mount
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/vehicles')
-      .then(response => response.json())
-      .then(data => setVehicles(data))
-      .catch(error => console.error('Error fetching vehicles:', error));
+    fetch('http://127.0.0.1:8000/api/v1/vehicles')
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(json => setVehicles(json.data ?? []))
+      .catch(error => {
+        console.error('Error fetching vehicles:', error);
+        setVehicles([]);
+      });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,7 +76,7 @@ export default function VehicleRecordsPage() {
       let response;
       if (editingVehicle) {
         // Update existing vehicle
-        response = await fetch(`http://127.0.0.1:8000/api/vehicles/${editingVehicle.id}`, {
+        response = await fetch(`http://127.0.0.1:8000/api/v1/vehicles/${editingVehicle.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -79,7 +85,7 @@ export default function VehicleRecordsPage() {
         });
       } else {
         // Create new vehicle
-        response = await fetch('http://127.0.0.1:8000/api/vehicles', {
+        response = await fetch('http://127.0.0.1:8000/api/v1/vehicles', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -163,7 +169,7 @@ export default function VehicleRecordsPage() {
   const handleDelete = async (id: number) => {
     if (confirm('Are you sure you want to delete this vehicle?')) {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/vehicles/${id}`, {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/vehicles/${id}`, {
           method: 'DELETE',
         });
 
