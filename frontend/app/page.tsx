@@ -10,6 +10,8 @@ export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [redirectAfterLogin, setRedirectAfterLogin] = useState<string | null>(null);
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +34,17 @@ export default function Home() {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
 
+  const handleBookNow = () => {
+    if (isAuthenticated) {
+      router.push("/vehicles");
+      return;
+    }
+
+    setIsLogin(true);
+    setRedirectAfterLogin("/vehicles");
+    setIsModalOpen(true);
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -39,10 +52,17 @@ export default function Home() {
 
     // Hardcoded admin credentials (temporary until backend is ready)
     if (email === "admin@jercebutours.com" && password === "admin123") {
-      setSuccess("Login successful! Redirecting to dashboard...");
+      setIsAuthenticated(true);
+      setSuccess("Login successful! Redirecting...");
       setTimeout(() => {
-        router.push("/admin");
-      }, 1500);
+        setIsModalOpen(false);
+        if (redirectAfterLogin) {
+          router.push(redirectAfterLogin);
+          setRedirectAfterLogin(null);
+        } else {
+          router.push("/admin");
+        }
+      }, 1000);
     } else {
       setError("Invalid email or password");
     }
@@ -73,16 +93,16 @@ export default function Home() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="#about" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-bold">
+              <Link href="#about" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
                 About
               </Link>
-              <Link href="#contact" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-bold">
+              <Link href="#contact" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
                 Contact Us
               </Link>
-              <Link href="#concern" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-bold">
+              <Link href="#concern" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
                 Concern
               </Link>
-              <Link href="/vehicles" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-bold">
+              <Link href="/vehicles" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
                 List Of Vehicles
               </Link>
               <button 
@@ -156,12 +176,16 @@ export default function Home() {
                   Reliable. Affordable. Always Ready.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                  <button
+                    type="button"
+                    onClick={handleBookNow}
+                    className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
+                  >
                     Book Now
                   </button>
-                  <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                  {/* <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                     Learn More
-                  </button>
+                  </button> */}
                 </div>
               </div>
               <div className="relative w-full max-w-[500px] aspect-square">
@@ -264,7 +288,7 @@ export default function Home() {
                   <div className="text-gray-600 dark:text-gray-300">Vehicles</div>
                 </div>
                 <div className="bg-white dark:bg-slate-700 p-6 rounded-xl shadow-lg">
-                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">10K+</div>
+                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">1K+</div>
                   <div className="text-gray-600 dark:text-gray-300">Happy Customers</div>
                 </div>
                 <div className="bg-white dark:bg-slate-700 p-6 rounded-xl shadow-lg">
@@ -395,9 +419,8 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Business Hours</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Mon - Fri: 8AM - 8PM</li>
-                <li>Saturday: 9AM - 6PM</li>
-                <li>Sunday: 10AM - 4PM</li>
+                <li>Monday - Sunday</li>
+                <li>Open 24 Hours (24/7)</li>
               </ul>
             </div>
           </div>
