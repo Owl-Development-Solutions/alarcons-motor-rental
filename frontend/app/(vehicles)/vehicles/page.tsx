@@ -1,7 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Car, Motorbike, Search, Filter, ChevronLeft, ChevronRight, LogOut, User, MessageSquare, Settings, Menu, X } from "lucide-react";
+import {
+  Car,
+  Motorbike,
+  Search,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+  User,
+  MessageSquare,
+  Settings,
+  Menu,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -29,7 +42,7 @@ export default function VehiclesPage() {
   const [bookingError, setBookingError] = useState("");
   const [bookingSuccess, setBookingSuccess] = useState("");
 
-  const heroImages = ['/pic11.jpg', '/pic12.jpg', '/pic13.png', '/pic15.jpg'];
+  const heroImages = ["/pic11.jpg", "/pic12.jpg", "/pic13.png", "/pic15.jpg"];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -44,39 +57,44 @@ export default function VehiclesPage() {
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length);
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + heroImages.length) % heroImages.length,
+    );
   };
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/v1/vehicles')
-      .then(response => response.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setVehicles(data);
-        } else if (Array.isArray(data?.data)) {
-          setVehicles(data.data);
-        } else if (Array.isArray(data?.vehicles)) {
-          setVehicles(data.vehicles);
-        } else if (data?.data && typeof data.data === 'object') {
-          setVehicles([data.data]);
-        } else {
-          console.error('Unexpected API response format:', data);
-          setVehicles([]);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching vehicles:', error);
-        setVehicles([]);
-      });
+    // fetch("http://127.0.0.1:8000/api/v1/vehicles")
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     if (Array.isArray(data)) {
+    //       setVehicles(data);
+    //     } else if (Array.isArray(data?.data)) {
+    //       setVehicles(data.data);
+    //     } else if (Array.isArray(data?.vehicles)) {
+    //       setVehicles(data.vehicles);
+    //     } else if (data?.data && typeof data.data === "object") {
+    //       setVehicles([data.data]);
+    //     } else {
+    //       console.error("Unexpected API response format:", data);
+    //       setVehicles([]);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error fetching vehicles:", error);
+    //     setVehicles([]);
+    //   });
   }, []);
 
-  const filteredVehicles = Array.isArray(vehicles) ? vehicles.filter(vehicle => {
-    const matchesFilter = filter === "all" || vehicle.type === filter;
-    const matchesSearch = vehicle.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         vehicle.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         vehicle.model.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  }) : [];
+  const filteredVehicles = Array.isArray(vehicles)
+    ? vehicles.filter((vehicle) => {
+        const matchesFilter = filter === "all" || vehicle.type === filter;
+        const matchesSearch =
+          vehicle.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          vehicle.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          vehicle.model.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesFilter && matchesSearch;
+      })
+    : [];
 
   const resetBookingForm = () => {
     setBookingForm({
@@ -106,7 +124,10 @@ export default function VehiclesPage() {
     setBookingForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleBookingFileChange = (event: any, field: "idPhoto" | "profilePhoto") => {
+  const handleBookingFileChange = (
+    event: any,
+    field: "idPhoto" | "profilePhoto",
+  ) => {
     const file = event.target.files?.[0] ?? null;
     setBookingForm((prev) => ({ ...prev, [field]: file }));
   };
@@ -115,8 +136,19 @@ export default function VehiclesPage() {
     event.preventDefault();
     setBookingError("");
 
-    if (!bookingForm.fullName.trim() || !bookingForm.phoneNumber.trim() || !bookingForm.email.trim() || !bookingForm.pickupDate || !bookingForm.pickupTime || !bookingForm.returnDate || !bookingForm.returnTime || !bookingForm.idNumber.trim()) {
-      setBookingError("Please fill in all required information before submitting.");
+    if (
+      !bookingForm.fullName.trim() ||
+      !bookingForm.phoneNumber.trim() ||
+      !bookingForm.email.trim() ||
+      !bookingForm.pickupDate ||
+      !bookingForm.pickupTime ||
+      !bookingForm.returnDate ||
+      !bookingForm.returnTime ||
+      !bookingForm.idNumber.trim()
+    ) {
+      setBookingError(
+        "Please fill in all required information before submitting.",
+      );
       return;
     }
 
@@ -131,7 +163,9 @@ export default function VehiclesPage() {
     }
 
     if (!bookingForm.idPhoto || !bookingForm.profilePhoto) {
-      setBookingError("Please upload your valid ID and a profile photo before submitting.");
+      setBookingError(
+        "Please upload your valid ID and a profile photo before submitting.",
+      );
       return;
     }
 
@@ -140,7 +174,9 @@ export default function VehiclesPage() {
       return;
     }
 
-    setBookingSuccess(`Booking request submitted for ${selectedVehicle?.name || "your selected vehicle"}. We will contact you shortly.`);
+    setBookingSuccess(
+      `Booking request submitted for ${selectedVehicle?.name || "your selected vehicle"}. We will contact you shortly.`,
+    );
     setShowBookingModal(false);
     setSelectedVehicle(null);
     resetBookingForm();
@@ -170,22 +206,31 @@ export default function VehiclesPage() {
                 JE Cebu Tours
               </span>
             </Link>
-            
+
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
+              <Link
+                href="/"
+                className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
+              >
                 Home
               </Link>
-              <Link href="/vehicles" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2">
+              <Link
+                href="/vehicles"
+                className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2"
+              >
                 <Car className="w-4 h-4" />
                 Booking
               </Link>
-              <Link href="/feedback" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2">
+              <Link
+                href="/feedback"
+                className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2"
+              >
                 <MessageSquare className="w-4 h-4" />
                 Feedback
               </Link>
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setShowSettingsMenu(!showSettingsMenu)}
                   className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2"
                 >
@@ -194,17 +239,15 @@ export default function VehiclesPage() {
                 </button>
                 {showSettingsMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 py-2 z-50">
-                    <Link 
-                      href="/profile" 
+                    <Link
+                      href="/profile"
                       className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
                       onClick={() => setShowSettingsMenu(false)}
                     >
                       <User className="w-4 h-4" />
                       Profile
                     </Link>
-                    <button 
-                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400 transition-colors text-left"
-                    >
+                    <button className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400 transition-colors text-left">
                       <LogOut className="w-4 h-4" />
                       Logout
                     </button>
@@ -214,34 +257,38 @@ export default function VehiclesPage() {
             </nav>
 
             {/* Mobile Menu Button */}
-            <button 
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
 
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
             <nav className="md:hidden mt-4 pb-4 space-y-2">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Home
               </Link>
-              <Link 
-                href="/vehicles" 
+              <Link
+                href="/vehicles"
                 className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Car className="w-4 h-4" />
                 Booking
               </Link>
-              <Link 
-                href="/feedback" 
+              <Link
+                href="/feedback"
                 className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -249,7 +296,7 @@ export default function VehiclesPage() {
                 Feedback
               </Link>
               <div className="px-4 py-2">
-                <button 
+                <button
                   onClick={() => setShowSettingsMenu(!showSettingsMenu)}
                   className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
                 >
@@ -258,8 +305,8 @@ export default function VehiclesPage() {
                 </button>
                 {showSettingsMenu && (
                   <div className="mt-2 space-y-1 pl-6">
-                    <Link 
-                      href="/profile" 
+                    <Link
+                      href="/profile"
                       className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                       onClick={() => {
                         setShowSettingsMenu(false);
@@ -269,9 +316,7 @@ export default function VehiclesPage() {
                       <User className="w-4 h-4" />
                       Profile
                     </Link>
-                    <button 
-                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors text-left"
-                    >
+                    <button className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors text-left">
                       <LogOut className="w-4 h-4" />
                       Logout
                     </button>
@@ -284,9 +329,15 @@ export default function VehiclesPage() {
       </header>
 
       {/* Hero Section */}
-      <div className="relative h-64 md:h-96 bg-cover bg-no-repeat transition-all duration-500" style={{ backgroundImage: `url('${heroImages[currentImageIndex]}')`, backgroundPosition: "center -20px" }}>
+      <div
+        className="relative h-64 md:h-96 bg-cover bg-no-repeat transition-all duration-500"
+        style={{
+          backgroundImage: `url('${heroImages[currentImageIndex]}')`,
+          backgroundPosition: "center -20px",
+        }}
+      >
         <div className="absolute inset-0 bg-black/50"></div>
-        
+
         {/* Navigation Buttons */}
         <button
           onClick={prevImage}
@@ -308,7 +359,7 @@ export default function VehiclesPage() {
               key={index}
               onClick={() => setCurrentImageIndex(index)}
               className={`w-3 h-3 rounded-full transition-all ${
-                index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                index === currentImageIndex ? "bg-white" : "bg-white/50"
               }`}
             />
           ))}
@@ -316,8 +367,13 @@ export default function VehiclesPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div>
-            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-4 drop-shadow-lg">Our Vehicle Fleet</h1>
-            <p className="text-sm md:text-xl text-white/95 drop-shadow-md">Quality vehicles, affordable prices, and dependable service for every journey.</p>
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-4 drop-shadow-lg">
+              Our Vehicle Fleet
+            </h1>
+            <p className="text-sm md:text-xl text-white/95 drop-shadow-md">
+              Quality vehicles, affordable prices, and dependable service for
+              every journey.
+            </p>
           </div>
         </div>
       </div>
@@ -386,7 +442,9 @@ export default function VehiclesPage() {
         {/* Vehicle Grid */}
         {filteredVehicles.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">No vehicles found</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
+              No vehicles found
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -410,7 +468,8 @@ export default function VehiclesPage() {
                           : "bg-red-500 text-white"
                       }`}
                     >
-                      {vehicle.availability.charAt(0).toUpperCase() + vehicle.availability.slice(1)}
+                      {vehicle.availability.charAt(0).toUpperCase() +
+                        vehicle.availability.slice(1)}
                     </span>
                   </div>
                 </div>
@@ -433,15 +492,21 @@ export default function VehiclesPage() {
                   <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
                     <div className="flex justify-between">
                       <span>Transmission:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{vehicle.transmission}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {vehicle.transmission}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Fuel Type:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{vehicle.fuel_type}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {vehicle.fuel_type}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Plate Number:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{vehicle.plate_number}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {vehicle.plate_number}
+                      </span>
                     </div>
                   </div>
                   <button
@@ -453,7 +518,9 @@ export default function VehiclesPage() {
                         : "bg-gray-300 dark:bg-slate-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    {vehicle.availability === "available" ? "Book Now" : "Not Available"}
+                    {vehicle.availability === "available"
+                      ? "Book Now"
+                      : "Not Available"}
                   </button>
                 </div>
               </div>
@@ -467,9 +534,16 @@ export default function VehiclesPage() {
           <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800 max-h-[90vh] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-600">Booking Request</p>
-                <h2 className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">Reserve {selectedVehicle.name}</h2>
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Please provide your basic details and upload a valid ID photo before we confirm your booking.</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-600">
+                  Booking Request
+                </p>
+                <h2 className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+                  Reserve {selectedVehicle.name}
+                </h2>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  Please provide your basic details and upload a valid ID photo
+                  before we confirm your booking.
+                </p>
               </div>
               <button
                 onClick={closeBookingModal}
@@ -482,7 +556,9 @@ export default function VehiclesPage() {
             <form onSubmit={handleBookingSubmit} className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Full Name</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Full Name
+                  </label>
                   <input
                     type="text"
                     name="fullName"
@@ -494,7 +570,9 @@ export default function VehiclesPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Phone Number</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Phone Number
+                  </label>
                   <input
                     type="tel"
                     name="phoneNumber"
@@ -506,7 +584,9 @@ export default function VehiclesPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Email Address</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Email Address
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -518,7 +598,9 @@ export default function VehiclesPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Valid ID Number</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Valid ID Number
+                  </label>
                   <input
                     type="text"
                     name="idNumber"
@@ -530,7 +612,9 @@ export default function VehiclesPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Pickup Date</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Pickup Date
+                  </label>
                   <input
                     type="date"
                     name="pickupDate"
@@ -541,7 +625,9 @@ export default function VehiclesPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Pickup Time</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Pickup Time
+                  </label>
                   <input
                     type="time"
                     name="pickupTime"
@@ -552,7 +638,9 @@ export default function VehiclesPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Return Date</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Return Date
+                  </label>
                   <input
                     type="date"
                     name="returnDate"
@@ -563,7 +651,9 @@ export default function VehiclesPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Return Time</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Return Time
+                  </label>
                   <input
                     type="time"
                     name="returnTime"
@@ -576,17 +666,23 @@ export default function VehiclesPage() {
               </div>
 
               <div className="rounded-xl border border-dashed border-orange-300 bg-orange-50 p-4 dark:border-orange-700 dark:bg-orange-900/10">
-                <label className="mb-2 block text-sm font-semibold text-gray-800 dark:text-gray-100">Upload Valid ID Photo</label>
+                <label className="mb-2 block text-sm font-semibold text-gray-800 dark:text-gray-100">
+                  Upload Valid ID Photo
+                </label>
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(event) => handleBookingFileChange(event, "idPhoto")}
+                  onChange={(event) =>
+                    handleBookingFileChange(event, "idPhoto")
+                  }
                   className="w-full text-sm text-gray-600 file:mr-4 file:rounded-full file:border-0 file:bg-orange-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-orange-700"
                   required
                 />
                 {bookingForm.idPhoto && (
                   <div className="mt-3 rounded-lg border border-orange-200 bg-white p-3 dark:border-orange-800 dark:bg-slate-800">
-                    <p className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-300">Selected file: {bookingForm.idPhoto.name}</p>
+                    <p className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-300">
+                      Selected file: {bookingForm.idPhoto.name}
+                    </p>
                     <img
                       src={URL.createObjectURL(bookingForm.idPhoto)}
                       alt="Selected ID preview"
@@ -594,21 +690,29 @@ export default function VehiclesPage() {
                     />
                   </div>
                 )}
-                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Please upload a clear image of your valid ID.</p>
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Please upload a clear image of your valid ID.
+                </p>
               </div>
 
               <div className="rounded-xl border border-dashed border-orange-300 bg-orange-50 p-4 dark:border-orange-700 dark:bg-orange-900/10">
-                <label className="mb-2 block text-sm font-semibold text-gray-800 dark:text-gray-100">Upload Profile Photo</label>
+                <label className="mb-2 block text-sm font-semibold text-gray-800 dark:text-gray-100">
+                  Upload Profile Photo
+                </label>
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(event) => handleBookingFileChange(event, "profilePhoto")}
+                  onChange={(event) =>
+                    handleBookingFileChange(event, "profilePhoto")
+                  }
                   className="w-full text-sm text-gray-600 file:mr-4 file:rounded-full file:border-0 file:bg-orange-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-orange-700"
                   required
                 />
                 {bookingForm.profilePhoto && (
                   <div className="mt-3 rounded-lg border border-orange-200 bg-white p-3 dark:border-orange-800 dark:bg-slate-800">
-                    <p className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-300">Selected file: {bookingForm.profilePhoto.name}</p>
+                    <p className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-300">
+                      Selected file: {bookingForm.profilePhoto.name}
+                    </p>
                     <img
                       src={URL.createObjectURL(bookingForm.profilePhoto)}
                       alt="Selected profile preview"
@@ -616,7 +720,9 @@ export default function VehiclesPage() {
                     />
                   </div>
                 )}
-                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">A clear profile photo helps us verify your booking request.</p>
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  A clear profile photo helps us verify your booking request.
+                </p>
               </div>
 
               {bookingError && (
@@ -648,7 +754,9 @@ export default function VehiclesPage() {
       {/* Footer */}
       <footer className="bg-gray-900 dark:bg-slate-900 text-white py-8 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-400">© 2025 Alarcons Motor Rental and JE Cebu Tours. All rights reserved.</p>
+          <p className="text-gray-400">
+            © 2025 Alarcons Motor Rental and JE Cebu Tours. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>
