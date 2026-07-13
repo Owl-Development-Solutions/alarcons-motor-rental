@@ -35,9 +35,22 @@ export const loginUser = async (data: LoginUser): Promise<LoginResponse> => {
       path: "/",
     });
 
-    console.log(res);
-
     return res;
+  } catch (error) {
+    throw toDomainError(error);
+  }
+};
+
+export const changePassword = async (data: {
+  current_password: string;
+  new_password: string;
+  new_password_confirmation: string;
+}): Promise<{ message: string }> => {
+  try {
+    return await serverFetch<{ message: string }>('/auth/change-password', {
+      method: 'POST',
+      data,
+    });
   } catch (error) {
     throw toDomainError(error);
   }

@@ -31,7 +31,7 @@ const About = () => {
             </div>
             <div className="bg-white dark:bg-slate-700 p-6 rounded-xl shadow-lg">
               <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-                10K+
+                1K+
               </div>
               <div className="text-gray-600 dark:text-gray-300">
                 Happy Customers

@@ -122,9 +122,11 @@ const AuthForm = ({ type }: { type: Mode }) => {
       <DialogContent className="sm:max-w-120 max-h-screen  bg-[#111729] overflow-x-auto">
         {mode === "Login" ? (
           <React.Fragment key={mode}>
-            <DialogHeader>
-              <DialogTitle>Welcome back</DialogTitle>
-              <DialogDescription className={labelClasses}>
+            <DialogHeader className="text-center">
+              <DialogTitle className="text-center text-white">
+                Welcome back
+              </DialogTitle>
+              <DialogDescription className={cn(labelClasses, "text-center")}>
                 Sign in to your account to continue.
               </DialogDescription>
             </DialogHeader>
@@ -245,9 +247,11 @@ const AuthForm = ({ type }: { type: Mode }) => {
           </React.Fragment>
         ) : (
           <React.Fragment key={mode}>
-            <DialogHeader>
-              <DialogTitle>Create an account</DialogTitle>
-              <DialogDescription className={labelClasses}>
+            <DialogHeader className="text-center">
+              <DialogTitle className="text-center text-white">
+                Create an account
+              </DialogTitle>
+              <DialogDescription className={cn(labelClasses, "text-center")}>
                 Fill in your details below to register.
               </DialogDescription>
             </DialogHeader>
