@@ -1,7 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Car, Motorbike, Search, Filter, ChevronLeft, ChevronRight, LogOut, User, MessageSquare, Settings, Menu, X } from "lucide-react";
+import {
+  Car,
+  Motorbike,
+  Search,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+  User,
+  MessageSquare,
+  Settings,
+  Menu,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -13,7 +26,7 @@ export default function VehiclesPage() {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const heroImages = ['/pic11.jpg', '/pic12.jpg'];
+  const heroImages = ["/pic11.jpg", "/pic12.jpg"];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,39 +41,27 @@ export default function VehiclesPage() {
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length);
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + heroImages.length) % heroImages.length,
+    );
   };
 
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/vehicles')
-      .then(response => response.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setVehicles(data);
-        } else {
-          console.error('Expected array but got:', data);
-          setVehicles([]);
-        }
+  const filteredVehicles = Array.isArray(vehicles)
+    ? vehicles.filter((vehicle) => {
+        const matchesFilter = filter === "all" || vehicle.type === filter;
+        const matchesSearch =
+          vehicle.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          vehicle.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          vehicle.model.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesFilter && matchesSearch;
       })
-      .catch(error => {
-        console.error('Error fetching vehicles:', error);
-        setVehicles([]);
-      });
-  }, []);
-
-  const filteredVehicles = Array.isArray(vehicles) ? vehicles.filter(vehicle => {
-    const matchesFilter = filter === "all" || vehicle.type === filter;
-    const matchesSearch = vehicle.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         vehicle.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         vehicle.model.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  }) : [];
+    : [];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-white dark:bg-slate-900/95 shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
               <Image
@@ -70,26 +71,35 @@ export default function VehiclesPage() {
                 height={40}
                 className="rounded-lg object-cover"
               />
-              <span className="text-lg font-bold text-orange-600 dark:text-orange-400">
+              <span className="text-xl font-bold text-orange-600 dark:text-orange-400">
                 JE Cebu Tours
               </span>
             </Link>
-            
+
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
+              <Link
+                href="/"
+                className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
+              >
                 Home
               </Link>
-              <Link href="/vehicles" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2">
+              <Link
+                href="/vehicles"
+                className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2"
+              >
                 <Car className="w-4 h-4" />
                 Booking
               </Link>
-              <Link href="/feedback" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2">
+              <Link
+                href="/feedback"
+                className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2"
+              >
                 <MessageSquare className="w-4 h-4" />
                 Feedback
               </Link>
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setShowSettingsMenu(!showSettingsMenu)}
                   className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2"
                 >
@@ -98,17 +108,15 @@ export default function VehiclesPage() {
                 </button>
                 {showSettingsMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 py-2 z-50">
-                    <Link 
-                      href="/profile" 
+                    <Link
+                      href="/profile"
                       className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
                       onClick={() => setShowSettingsMenu(false)}
                     >
                       <User className="w-4 h-4" />
                       Profile
                     </Link>
-                    <button 
-                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400 transition-colors text-left"
-                    >
+                    <button className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400 transition-colors text-left">
                       <LogOut className="w-4 h-4" />
                       Logout
                     </button>
@@ -118,34 +126,38 @@ export default function VehiclesPage() {
             </nav>
 
             {/* Mobile Menu Button */}
-            <button 
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
 
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
             <nav className="md:hidden mt-4 pb-4 space-y-2">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Home
               </Link>
-              <Link 
-                href="/vehicles" 
+              <Link
+                href="/vehicles"
                 className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Car className="w-4 h-4" />
                 Booking
               </Link>
-              <Link 
-                href="/feedback" 
+              <Link
+                href="/feedback"
                 className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -153,7 +165,7 @@ export default function VehiclesPage() {
                 Feedback
               </Link>
               <div className="px-4 py-2">
-                <button 
+                <button
                   onClick={() => setShowSettingsMenu(!showSettingsMenu)}
                   className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
                 >
@@ -162,8 +174,8 @@ export default function VehiclesPage() {
                 </button>
                 {showSettingsMenu && (
                   <div className="mt-2 space-y-1 pl-6">
-                    <Link 
-                      href="/profile" 
+                    <Link
+                      href="/profile"
                       className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                       onClick={() => {
                         setShowSettingsMenu(false);
@@ -173,9 +185,7 @@ export default function VehiclesPage() {
                       <User className="w-4 h-4" />
                       Profile
                     </Link>
-                    <button 
-                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors text-left"
-                    >
+                    <button className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors text-left">
                       <LogOut className="w-4 h-4" />
                       Logout
                     </button>
@@ -188,9 +198,15 @@ export default function VehiclesPage() {
       </header>
 
       {/* Hero Section */}
-      <div className="relative h-64 md:h-96 bg-cover bg-no-repeat transition-all duration-500" style={{ backgroundImage: `url('${heroImages[currentImageIndex]}')`, backgroundPosition: "center -20px" }}>
+      <div
+        className="relative h-64 md:h-96 bg-cover bg-no-repeat transition-all duration-500"
+        style={{
+          backgroundImage: `url('${heroImages[currentImageIndex]}')`,
+          backgroundPosition: "center -20px",
+        }}
+      >
         <div className="absolute inset-0 bg-black/50"></div>
-        
+
         {/* Navigation Buttons */}
         <button
           onClick={prevImage}
@@ -212,7 +228,7 @@ export default function VehiclesPage() {
               key={index}
               onClick={() => setCurrentImageIndex(index)}
               className={`w-3 h-3 rounded-full transition-all ${
-                index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                index === currentImageIndex ? "bg-white" : "bg-white/50"
               }`}
             />
           ))}
@@ -220,8 +236,13 @@ export default function VehiclesPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div>
-            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-4 drop-shadow-lg">Our Vehicle Fleet</h1>
-            <p className="text-sm md:text-xl text-white/95 drop-shadow-md">Quality vehicles, affordable prices, and dependable service for every journey.</p>
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-4 drop-shadow-lg">
+              Our Vehicle Fleet
+            </h1>
+            <p className="text-sm md:text-xl text-white/95 drop-shadow-md">
+              Quality vehicles, affordable prices, and dependable service for
+              every journey.
+            </p>
           </div>
         </div>
       </div>
@@ -284,7 +305,9 @@ export default function VehiclesPage() {
         {/* Vehicle Grid */}
         {filteredVehicles.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">No vehicles found</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
+              No vehicles found
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -308,7 +331,8 @@ export default function VehiclesPage() {
                           : "bg-red-500 text-white"
                       }`}
                     >
-                      {vehicle.availability.charAt(0).toUpperCase() + vehicle.availability.slice(1)}
+                      {vehicle.availability.charAt(0).toUpperCase() +
+                        vehicle.availability.slice(1)}
                     </span>
                   </div>
                 </div>
@@ -331,15 +355,21 @@ export default function VehiclesPage() {
                   <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
                     <div className="flex justify-between">
                       <span>Transmission:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{vehicle.transmission}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {vehicle.transmission}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Fuel Type:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{vehicle.fuel_type}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {vehicle.fuel_type}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Plate Number:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{vehicle.plate_number}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {vehicle.plate_number}
+                      </span>
                     </div>
                   </div>
                   <button
@@ -350,7 +380,9 @@ export default function VehiclesPage() {
                         : "bg-gray-300 dark:bg-slate-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    {vehicle.availability === "available" ? "Book Now" : "Not Available"}
+                    {vehicle.availability === "available"
+                      ? "Book Now"
+                      : "Not Available"}
                   </button>
                 </div>
               </div>
@@ -362,7 +394,9 @@ export default function VehiclesPage() {
       {/* Footer */}
       <footer className="bg-gray-900 dark:bg-slate-900 text-white py-8 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-400">© 2025 Alarcons Motor Rental and JE Cebu Tours. All rights reserved.</p>
+          <p className="text-gray-400">
+            © 2025 Alarcons Motor Rental and JE Cebu Tours. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>

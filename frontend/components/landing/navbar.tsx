@@ -12,6 +12,9 @@ import {
 } from "../ui/sheet";
 import { Menu } from "lucide-react";
 import { useEffect, useState } from "react";
+import AuthForm from "../auth/auth-form";
+import { useUser } from "@/data/context/user-context";
+import UserButton from "../shared/user-button";
 
 const navLinks = [
   {
@@ -34,6 +37,8 @@ const navLinks = [
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+
+  const { user } = useUser();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -62,8 +67,8 @@ const Navbar = () => {
               <Image
                 src="/car1.jpg"
                 alt="JE Cebu Tours Logo"
-                width={50}
-                height={50}
+                width={40}
+                height={40}
                 className="rounded-lg object-cover"
               />
               <span className="text-xl font-bold text-orange-600 dark:text-orange-400">
@@ -94,10 +99,17 @@ const Navbar = () => {
                   )}
                 </li>
               ))}
+
+              {user ? (
+                <>
+                  <UserButton user={user} />
+                </>
+              ) : (
+                <>
+                  <AuthForm type="Login" />
+                </>
+              )}
             </ul>
-            <button className="ml-4 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-colors">
-              Sign Up
-            </button>
           </nav>
 
           {/* Mobile menu button */}
@@ -108,17 +120,16 @@ const Navbar = () => {
               </SheetTrigger>
               <SheetContent className="flex flex-col items-start p-6 bg-gray-100 dark:bg-gray-900 ">
                 <SheetTitle>Menu</SheetTitle>
-
                 <ul className="flex flex-col gap-4">
                   {navLinks.map((link) => (
                     <li key={link.href}>
                       {link.href.startsWith("#") ? (
-                        <button
+                        <Button
                           onClick={() => scrollTo(link.href)}
                           className=" cursor-pointer text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
                         >
                           {link.label}
-                        </button>
+                        </Button>
                       ) : (
                         <Link
                           href={link.href}
@@ -130,9 +141,15 @@ const Navbar = () => {
                     </li>
                   ))}
                 </ul>
-                <button className="ml-4 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-colors">
-                  Sign Up
-                </button>
+                {user ? (
+                  <>
+                    <UserButton user={user} />
+                  </>
+                ) : (
+                  <>
+                    <AuthForm type="Login" />
+                  </>
+                )}
                 <SheetDescription></SheetDescription>
               </SheetContent>
             </Sheet>
