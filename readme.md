@@ -22,7 +22,7 @@ project-root/
 ## Booking Modules
 
 - [ ] **Car Booking**
-  - [ ] List/search available cars
+  - [x] List/search available cars
   - [ ] Booking form & date selection
   - [ ] Booking confirmation & status
 - [ ] **Motor Booking**
