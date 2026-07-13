@@ -18,7 +18,8 @@ project-root/
 ├── backend/     # Laravel API
 └── frontend/    # Next.js app
 ```
-
+## USER profile
+  [x] creat profile Logic faction 
 ## Booking Modules
 
 - [ ] **Car Booking**
