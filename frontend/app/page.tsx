@@ -9,6 +9,7 @@ export default function Home() {
   const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -72,16 +73,16 @@ export default function Home() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="#about" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
+              <Link href="#about" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-bold">
                 About
               </Link>
-              <Link href="#contact" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
+              <Link href="#contact" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-bold">
                 Contact Us
               </Link>
-              <Link href="#concern" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
+              <Link href="#concern" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-bold">
                 Concern
               </Link>
-              <Link href="/vehicles" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
+              <Link href="/vehicles" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-bold">
                 List Of Vehicles
               </Link>
               <button 
@@ -93,12 +94,45 @@ export default function Home() {
             </nav>
 
             {/* Mobile menu button */}
-            <button className="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800">
+            <button
+              type="button"
+              aria-expanded={isMobileMenuOpen}
+              aria-label="Toggle navigation"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              className="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
+            >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
           </div>
+
+          {isMobileMenuOpen && (
+            <div className="md:hidden border-t border-orange-200 bg-white/95 px-4 py-4 space-y-3">
+              <Link href="#about" onClick={() => setIsMobileMenuOpen(false)} className="block text-gray-700 hover:text-orange-600 font-medium">
+                About
+              </Link>
+              <Link href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="block text-gray-700 hover:text-orange-600 font-medium">
+                Contact Us
+              </Link>
+              <Link href="#concern" onClick={() => setIsMobileMenuOpen(false)} className="block text-gray-700 hover:text-orange-600 font-medium">
+                Concern
+              </Link>
+              <Link href="/vehicles" onClick={() => setIsMobileMenuOpen(false)} className="block text-gray-700 hover:text-orange-600 font-medium">
+                List Of Vehicles
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsModalOpen(true);
+                }}
+                className="w-full px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-colors"
+              >
+                Sign Up
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -108,24 +142,24 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-                  Premium Motor Rental and Car
-                  <span className="block text-orange-600 dark:text-orange-400">Services</span>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                  <span className="text-white">Premium Motor Rental and Car</span>
+                  <span className="block text-white">Services</span>
                 </h1>
-                <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-lg text-white font-bold leading-relaxed">
                   Your Trusted Partner on Every Journey.
                 </p>
-                <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-lg text-white font-bold leading-relaxed">
                   From daily commutes to weekend adventures, our premium rental services offer dependable motorcycles and cars tailored to your needs. Enjoy flexible rental options, affordable pricing, and outstanding customer service every step of the way.
                 </p>
-                <p className="text-lg font-semibold text-orange-600 dark:text-orange-400 leading-relaxed">
+                <p className="text-lg font-semibold text-white leading-relaxed">
                   Reliable. Affordable. Always Ready.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                     Book Now
                   </button>
-                  <button className="px-8 py-3 border-2 border-orange-600 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-800 font-semibold rounded-lg transition-colors">
+                  <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                     Learn More
                   </button>
                 </div>
