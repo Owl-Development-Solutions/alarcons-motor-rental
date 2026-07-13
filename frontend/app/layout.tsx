@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { getCurrentUser } from "@/data/actions/user";
 import { UserProvider } from "@/data/context/user-context";
+import { getVehicles } from "@/data/actions/vehicle";
 
 const inter = Inter({ subsets: ["latin"] });
 

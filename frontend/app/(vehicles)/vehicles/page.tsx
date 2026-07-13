@@ -25,8 +25,24 @@ export default function VehiclesPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<any | null>(null);
+  const [bookingForm, setBookingForm] = useState({
+    fullName: "",
+    phoneNumber: "",
+    email: "",
+    pickupDate: "",
+    pickupTime: "",
+    returnDate: "",
+    returnTime: "",
+    idNumber: "",
+    idPhoto: null as File | null,
+    profilePhoto: null as File | null,
+  });
+  const [bookingError, setBookingError] = useState("");
+  const [bookingSuccess, setBookingSuccess] = useState("");
 
-  const heroImages = ["/pic11.jpg", "/pic12.jpg"];
+  const heroImages = ["/pic11.jpg", "/pic12.jpg", "/pic13.png", "/pic15.jpg"];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,6 +62,29 @@ export default function VehiclesPage() {
     );
   };
 
+  useEffect(() => {
+    // fetch("http://127.0.0.1:8000/api/v1/vehicles")
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     if (Array.isArray(data)) {
+    //       setVehicles(data);
+    //     } else if (Array.isArray(data?.data)) {
+    //       setVehicles(data.data);
+    //     } else if (Array.isArray(data?.vehicles)) {
+    //       setVehicles(data.vehicles);
+    //     } else if (data?.data && typeof data.data === "object") {
+    //       setVehicles([data.data]);
+    //     } else {
+    //       console.error("Unexpected API response format:", data);
+    //       setVehicles([]);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error fetching vehicles:", error);
+    //     setVehicles([]);
+    //   });
+  }, []);
+
   const filteredVehicles = Array.isArray(vehicles)
     ? vehicles.filter((vehicle) => {
         const matchesFilter = filter === "all" || vehicle.type === filter;
@@ -57,11 +96,103 @@ export default function VehiclesPage() {
       })
     : [];
 
+  const resetBookingForm = () => {
+    setBookingForm({
+      fullName: "",
+      phoneNumber: "",
+      email: "",
+      pickupDate: "",
+      pickupTime: "",
+      returnDate: "",
+      returnTime: "",
+      idNumber: "",
+      idPhoto: null,
+      profilePhoto: null,
+    });
+    setBookingError("");
+    setBookingSuccess("");
+  };
+
+  const handleOpenBookingModal = (vehicle: any) => {
+    setSelectedVehicle(vehicle);
+    setShowBookingModal(true);
+    resetBookingForm();
+  };
+
+  const handleBookingInputChange = (event: any) => {
+    const { name, value } = event.target;
+    setBookingForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleBookingFileChange = (
+    event: any,
+    field: "idPhoto" | "profilePhoto",
+  ) => {
+    const file = event.target.files?.[0] ?? null;
+    setBookingForm((prev) => ({ ...prev, [field]: file }));
+  };
+
+  const handleBookingSubmit = (event: any) => {
+    event.preventDefault();
+    setBookingError("");
+
+    if (
+      !bookingForm.fullName.trim() ||
+      !bookingForm.phoneNumber.trim() ||
+      !bookingForm.email.trim() ||
+      !bookingForm.pickupDate ||
+      !bookingForm.pickupTime ||
+      !bookingForm.returnDate ||
+      !bookingForm.returnTime ||
+      !bookingForm.idNumber.trim()
+    ) {
+      setBookingError(
+        "Please fill in all required information before submitting.",
+      );
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(bookingForm.email)) {
+      setBookingError("Please enter a valid email address.");
+      return;
+    }
+
+    if (!/^\d{7,15}$/.test(bookingForm.phoneNumber.replace(/\D/g, ""))) {
+      setBookingError("Please enter a valid phone number.");
+      return;
+    }
+
+    if (!bookingForm.idPhoto || !bookingForm.profilePhoto) {
+      setBookingError(
+        "Please upload your valid ID and a profile photo before submitting.",
+      );
+      return;
+    }
+
+    if (new Date(bookingForm.returnDate) <= new Date(bookingForm.pickupDate)) {
+      setBookingError("Return date must be after pickup date.");
+      return;
+    }
+
+    setBookingSuccess(
+      `Booking request submitted for ${selectedVehicle?.name || "your selected vehicle"}. We will contact you shortly.`,
+    );
+    setShowBookingModal(false);
+    setSelectedVehicle(null);
+    resetBookingForm();
+  };
+
+  const closeBookingModal = () => {
+    setShowBookingModal(false);
+    setSelectedVehicle(null);
+    resetBookingForm();
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-900/95 shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <header className="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
               <Image
@@ -71,7 +202,7 @@ export default function VehiclesPage() {
                 height={40}
                 className="rounded-lg object-cover"
               />
-              <span className="text-xl font-bold text-orange-600 dark:text-orange-400">
+              <span className="text-lg font-bold text-orange-600 dark:text-orange-400">
                 JE Cebu Tours
               </span>
             </Link>
@@ -302,6 +433,12 @@ export default function VehiclesPage() {
           </div>
         </div>
 
+        {bookingSuccess && (
+          <div className="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-300">
+            {bookingSuccess}
+          </div>
+        )}
+
         {/* Vehicle Grid */}
         {filteredVehicles.length === 0 ? (
           <div className="text-center py-12">
@@ -374,6 +511,7 @@ export default function VehiclesPage() {
                   </div>
                   <button
                     disabled={vehicle.availability !== "available"}
+                    onClick={() => handleOpenBookingModal(vehicle)}
                     className={`w-full py-3 rounded-lg font-semibold transition-colors ${
                       vehicle.availability === "available"
                         ? "bg-orange-600 hover:bg-orange-700 text-white"
@@ -390,6 +528,228 @@ export default function VehiclesPage() {
           </div>
         )}
       </div>
+
+      {showBookingModal && selectedVehicle && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4 py-6">
+          <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800 max-h-[90vh] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-600">
+                  Booking Request
+                </p>
+                <h2 className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+                  Reserve {selectedVehicle.name}
+                </h2>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  Please provide your basic details and upload a valid ID photo
+                  before we confirm your booking.
+                </p>
+              </div>
+              <button
+                onClick={closeBookingModal}
+                className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-slate-700 dark:hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleBookingSubmit} className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={bookingForm.fullName}
+                    onChange={handleBookingInputChange}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    placeholder="Juan Dela Cruz"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={bookingForm.phoneNumber}
+                    onChange={handleBookingInputChange}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    placeholder="0917 123 4567"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={bookingForm.email}
+                    onChange={handleBookingInputChange}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Valid ID Number
+                  </label>
+                  <input
+                    type="text"
+                    name="idNumber"
+                    value={bookingForm.idNumber}
+                    onChange={handleBookingInputChange}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    placeholder="123456789"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Pickup Date
+                  </label>
+                  <input
+                    type="date"
+                    name="pickupDate"
+                    value={bookingForm.pickupDate}
+                    onChange={handleBookingInputChange}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Pickup Time
+                  </label>
+                  <input
+                    type="time"
+                    name="pickupTime"
+                    value={bookingForm.pickupTime}
+                    onChange={handleBookingInputChange}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Return Date
+                  </label>
+                  <input
+                    type="date"
+                    name="returnDate"
+                    value={bookingForm.returnDate}
+                    onChange={handleBookingInputChange}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Return Time
+                  </label>
+                  <input
+                    type="time"
+                    name="returnTime"
+                    value={bookingForm.returnTime}
+                    onChange={handleBookingInputChange}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-dashed border-orange-300 bg-orange-50 p-4 dark:border-orange-700 dark:bg-orange-900/10">
+                <label className="mb-2 block text-sm font-semibold text-gray-800 dark:text-gray-100">
+                  Upload Valid ID Photo
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) =>
+                    handleBookingFileChange(event, "idPhoto")
+                  }
+                  className="w-full text-sm text-gray-600 file:mr-4 file:rounded-full file:border-0 file:bg-orange-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-orange-700"
+                  required
+                />
+                {bookingForm.idPhoto && (
+                  <div className="mt-3 rounded-lg border border-orange-200 bg-white p-3 dark:border-orange-800 dark:bg-slate-800">
+                    <p className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-300">
+                      Selected file: {bookingForm.idPhoto.name}
+                    </p>
+                    <img
+                      src={URL.createObjectURL(bookingForm.idPhoto)}
+                      alt="Selected ID preview"
+                      className="h-40 w-full rounded-lg object-cover"
+                    />
+                  </div>
+                )}
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Please upload a clear image of your valid ID.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-dashed border-orange-300 bg-orange-50 p-4 dark:border-orange-700 dark:bg-orange-900/10">
+                <label className="mb-2 block text-sm font-semibold text-gray-800 dark:text-gray-100">
+                  Upload Profile Photo
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) =>
+                    handleBookingFileChange(event, "profilePhoto")
+                  }
+                  className="w-full text-sm text-gray-600 file:mr-4 file:rounded-full file:border-0 file:bg-orange-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-orange-700"
+                  required
+                />
+                {bookingForm.profilePhoto && (
+                  <div className="mt-3 rounded-lg border border-orange-200 bg-white p-3 dark:border-orange-800 dark:bg-slate-800">
+                    <p className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-300">
+                      Selected file: {bookingForm.profilePhoto.name}
+                    </p>
+                    <img
+                      src={URL.createObjectURL(bookingForm.profilePhoto)}
+                      alt="Selected profile preview"
+                      className="h-40 w-full rounded-lg object-cover"
+                    />
+                  </div>
+                )}
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  A clear profile photo helps us verify your booking request.
+                </p>
+              </div>
+
+              {bookingError && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
+                  {bookingError}
+                </div>
+              )}
+
+              <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={closeBookingModal}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-slate-600 dark:text-gray-200 dark:hover:bg-slate-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+                >
+                  Submit Booking
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="bg-gray-900 dark:bg-slate-900 text-white py-8 mt-12">

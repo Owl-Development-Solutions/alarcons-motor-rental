@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Car,
@@ -22,14 +22,16 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/Dashboard-Admin", icon: LayoutDashboard },
-  { name: "Vehicle Records", href: "/Dashboard-Admin/vehicles", icon: Car },
-  { name: "Booking Records", href: "/Dashboard-Admin/bookings", icon: Calendar },
-  { name: "Customers", href: "/Dashboard-Admin/customers", icon: Users },
-  { name: "Concerns", href: "/Dashboard-Admin/concerns", icon: MessageSquare },
-  { name: "Notifications", href: "/Dashboard-Admin/notifications", icon: Bell },
-  { name: "Profile", href: "/Dashboard-Admin/profile", icon: User },
-  { name: "Settings", href: "/Dashboard-Admin/settings", icon: Settings },
+  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Vehicle Records", href: "/admin/vehicles", icon: Car },
+  { name: "Booking Records", href: "/admin/bookings", icon: Calendar },
+  { name: "Customers", href: "/admin/customers", icon: Users },
+  { name: "Concerns", href: "/admin/concerns", icon: MessageSquare },
+];
+
+const settingsNav = [
+  { name: "Profile", href: "/admin/profile", icon: User },
+  { name: "Notifications", href: "/admin/notifications", icon: Bell },
   { name: "Logout", href: "/", icon: LogOut },
 ];
 
@@ -38,7 +40,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -100,6 +104,39 @@ export default function DashboardLayout({
                 </Link>
               );
             })}
+
+            <button
+              type="button"
+              onClick={() => setSettingsOpen((prev) => !prev)}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-orange-600 dark:hover:text-orange-400 transition-all"
+            >
+              <Settings className="w-5 h-5" />
+              <span>Settings</span>
+              <ChevronRight className={`w-4 h-4 ml-auto transition-transform ${settingsOpen ? "rotate-90" : "rotate-0"}`} />
+            </button>
+
+            {settingsOpen && (
+              <div className="space-y-1 pl-8">
+                {settingsNav.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                        isActive
+                          ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-orange-600 dark:hover:text-orange-400"
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5" />
+                      <span>{item.name}</span>
+                      {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </nav>
 
           {/* User info */}
@@ -138,12 +175,12 @@ export default function DashboardLayout({
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
               </button>
-              <Link
+              {/* <Link
                 href="/"
                 className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
               >
                 View Site
-              </Link>
+              </Link> */}
             </div>
           </div>
         </header>
