@@ -55,3 +55,27 @@ export const changePassword = async (data: {
     throw toDomainError(error);
   }
 };
+
+export const updateProfile = async (data: Partial<{
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
+  birth_date: string | null;
+  gender: string | null;
+  username: string;
+  email: string;
+  phone_number: string;
+  address: string;
+  drivers_license_number: string | null;
+  license_expiry: string | null;
+  license_image: string | null;
+}>): Promise<{ message: string; user: any }> => {
+  try {
+    return await serverFetch<{ message: string; user: any }>('/auth/profile', {
+      method: 'PUT',
+      data,
+    });
+  } catch (error) {
+    throw toDomainError(error);
+  }
+};
