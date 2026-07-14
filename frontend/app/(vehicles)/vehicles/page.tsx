@@ -63,26 +63,21 @@ export default function VehiclesPage() {
   };
 
   useEffect(() => {
-    // fetch("http://127.0.0.1:8000/api/v1/vehicles")
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     if (Array.isArray(data)) {
-    //       setVehicles(data);
-    //     } else if (Array.isArray(data?.data)) {
-    //       setVehicles(data.data);
-    //     } else if (Array.isArray(data?.vehicles)) {
-    //       setVehicles(data.vehicles);
-    //     } else if (data?.data && typeof data.data === "object") {
-    //       setVehicles([data.data]);
-    //     } else {
-    //       console.error("Unexpected API response format:", data);
-    //       setVehicles([]);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error fetching vehicles:", error);
-    //     setVehicles([]);
-    //   });
+    const loadVehicles = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/v1/vehicles");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        const vehicleList = Array.isArray(data?.data) ? data.data : [];
+        setVehicles(vehicleList);
+      } catch (error) {
+        console.error("Error fetching vehicles:", error);
+        setVehicles([]);
+      }
+    };
+
+    loadVehicles();
   }, []);
 
   const filteredVehicles = Array.isArray(vehicles)

@@ -76,7 +76,7 @@ export default function VehicleRecordsPage() {
       let response;
       if (editingVehicle) {
         // Update existing vehicle
-        response = await fetch(`http://127.0.0.1:8000/api/v1/vehicles/${editingVehicle.id}`, {
+        response = await fetch(`http://127.0.0.1:8000/api/v1/admin/vehicles/${editingVehicle.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export default function VehicleRecordsPage() {
         });
       } else {
         // Create new vehicle
-        response = await fetch('http://127.0.0.1:8000/api/v1/vehicles', {
+        response = await fetch('http://127.0.0.1:8000/api/v1/admin/vehicles', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -120,9 +120,15 @@ export default function VehicleRecordsPage() {
         setEditingVehicle(null);
         setShowForm(false);
       } else {
-        const errorData = await response.json();
-        console.error('Failed to save vehicle:', errorData);
-        alert('Failed to save vehicle: ' + JSON.stringify(errorData));
+        let errorText = '';
+        try {
+          const errorData = await response.json();
+          errorText = Object.keys(errorData).length > 0 ? JSON.stringify(errorData) : `HTTP ${response.status} ${response.statusText}`;
+        } catch (e) {
+          errorText = `HTTP ${response.status} ${response.statusText}`;
+        }
+        console.error('Failed to save vehicle:', errorText);
+        alert('Failed to save vehicle: ' + errorText);
       }
     } catch (error) {
       console.error('Error saving vehicle:', error);

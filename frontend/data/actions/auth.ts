@@ -41,6 +41,19 @@ export const loginUser = async (data: LoginUser): Promise<LoginResponse> => {
   }
 };
 
+export const logoutUser = async (): Promise<{ message: string }> => {
+  try {
+    const res = await serverFetch<{ message: string }>("/logout", {
+      method: "POST",
+    });
+
+    (await cookies()).delete("auth_token");
+    return res;
+  } catch (error) {
+    throw toDomainError(error);
+  }
+};
+
 export const changePassword = async (data: {
   current_password: string;
   new_password: string;
