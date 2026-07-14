@@ -73,30 +73,47 @@ const AuthForm = ({ type }: { type: Mode }) => {
   });
 
   const onLoginSubmit = async (values: z.infer<typeof signInFormSchema>) => {
-    const res = await loginUser(values);
-    setUser(res.user);
-    if (res.message) {
-      toast.success(res.message, {
-        position: "bottom-right",
-        style: styleSucces,
-      });
+    try {
+      const res = await loginUser(values);
+      setUser(res.user);
+
+      if (res.message) {
+        toast.success(res.message, {
+          position: "bottom-right",
+          style: styleSucces,
+        });
+      }
+
       setOpen(false);
-    } else {
-      setOpen(true);
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to sign in. Please check your credentials.",
+        { position: "bottom-right" },
+      );
     }
   };
 
   const onRegisterSubmit = async (values: z.infer<typeof signUpFormSchema>) => {
-    const res = await registerUser(values);
+    try {
+      const res = await registerUser(values);
 
-    if (res.message) {
-      toast.success(res.message, {
-        position: "bottom-right",
-        style: styleSucces,
-      });
+      if (res.message) {
+        toast.success(res.message, {
+          position: "bottom-right",
+          style: styleSucces,
+        });
+      }
+
       setOpen(false);
-    } else {
-      setOpen(true);
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to complete registration.",
+        { position: "bottom-right" },
+      );
     }
   };
 
