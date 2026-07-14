@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { serverFetch } from "@/data/models/api";
 import {
   Users,
   Search,
@@ -11,58 +13,25 @@ import {
 } from "lucide-react";
 
 export default function CustomersPage() {
-  const customers = [
-    {
-      id: "CU-001",
-      name: "Juan Dela Cruz",
-      email: "juan@email.com",
-      phone: "09123456789",
-      address: "Cebu City",
-      status: "Active",
-      dateRegistered: "2024-01-15",
-      totalBookings: "5",
-    },
-    {
-      id: "CU-002",
-      name: "Maria Santos",
-      email: "maria@email.com",
-      phone: "09123456788",
-      address: "Mandaue City",
-      status: "Active",
-      dateRegistered: "2024-01-14",
-      totalBookings: "3",
-    },
-    {
-      id: "CU-003",
-      name: "Pedro Reyes",
-      email: "pedro@email.com",
-      phone: "09123456787",
-      address: "Lapu-Lapu City",
-      status: "Active",
-      dateRegistered: "2024-01-13",
-      totalBookings: "8",
-    },
-    {
-      id: "CU-004",
-      name: "Ana Garcia",
-      email: "ana@email.com",
-      phone: "09123456786",
-      address: "Talisay City",
-      status: "Pending",
-      dateRegistered: "2024-01-12",
-      totalBookings: "0",
-    },
-    {
-      id: "CU-005",
-      name: "Carlos Mendoza",
-      email: "carlos@email.com",
-      phone: "09123456785",
-      address: "Cebu City",
-      status: "Active",
-      dateRegistered: "2024-01-11",
-      totalBookings: "2",
-    },
-  ];
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadCustomers = async () => {
+      try {
+          // Use serverFetch which includes auth token from cookies
+          const data = await serverFetch<any>("/admin/users");
+          setCustomers(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+        setCustomers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCustomers();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -106,6 +75,11 @@ export default function CustomersPage() {
           </div>
         </div>
         <div className="overflow-x-auto">
+          {loading ? (
+            <div className="p-6 text-sm text-gray-500 dark:text-gray-400">
+              Loading customers...
+            </div>
+          ) : (
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-slate-700">
               <tr>
@@ -139,60 +113,69 @@ export default function CustomersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
-              {customers.map((customer) => (
-                <tr
-                  key={customer.id}
-                  className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                >
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                    {customer.id}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                    {customer.name}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                    {customer.email}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                    {customer.phone}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                    {customer.address}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        customer.status === "Active"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                      }`}
-                    >
-                      {customer.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                    {customer.dateRegistered}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                    {customer.totalBookings}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <button className="p-1 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+              {customers.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="px-6 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                    No customers found.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                customers.map((customer) => (
+                  <tr
+                    key={customer.id}
+                    className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                      {customer.id}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                      {customer.name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                      {customer.email}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                      {customer.phone_number || "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                      {customer.address || "—"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          customer.is_active
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                        }`}
+                      >
+                        {customer.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                      {customer.created_at ? new Date(customer.created_at).toLocaleDateString() : "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                      {customer.role || "—"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <button className="p-1 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button className="p-1 text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
+          )}
         </div>
       </div>
     </div>

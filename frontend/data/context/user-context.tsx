@@ -5,7 +5,7 @@ import { User } from "../models/user.model";
 
 const UserContext = createContext<{
   user: User | null;
-  setUser: (u: User) => void;
+  setUser: (u: User | null) => void;
 } | null>(null);
 
 export function UserProvider({

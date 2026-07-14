@@ -116,30 +116,6 @@ export default function AdminProfilePage() {
           <h2 className="text-lg font-semibold">Personal Details</h2>
           <div className="mt-5 grid gap-4 text-sm text-slate-300">
             <div>
-              <label className="mb-1 block text-slate-400">First Name</label>
-              <Input
-                value={formData.first_name}
-                onChange={handleChange("first_name")}
-                className="bg-slate-800 border-slate-700 text-white"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-slate-400">Middle Name</label>
-              <Input
-                value={formData.middle_name}
-                onChange={handleChange("middle_name")}
-                className="bg-slate-800 border-slate-700 text-white"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-slate-400">Last Name</label>
-              <Input
-                value={formData.last_name}
-                onChange={handleChange("last_name")}
-                className="bg-slate-800 border-slate-700 text-white"
-              />
-            </div>
-            <div>
               <label className="mb-1 block text-slate-400">Username</label>
               <Input
                 value={formData.username}
@@ -153,14 +129,6 @@ export default function AdminProfilePage() {
                 type="email"
                 value={formData.email}
                 onChange={handleChange("email")}
-                className="bg-slate-800 border-slate-700 text-white"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-slate-400">Phone Number</label>
-              <Input
-                value={formData.phone_number}
-                onChange={handleChange("phone_number")}
                 className="bg-slate-800 border-slate-700 text-white"
               />
             </div>

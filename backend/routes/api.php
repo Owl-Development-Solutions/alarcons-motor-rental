@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController; //for admin vehicle controller
@@ -38,6 +39,7 @@ Route::prefix('v1')->group(function () {
 
         //Admin-only - protected by the 'admin' middleware alias.
         Route::middleware('admin')->prefix('admin')->group(function () {
+            Route::get('/users', [AdminUserController::class, 'index']);
             Route::post('/vehicles', [AdminVehicleController::class, 'store']);
             Route::put('/vehicles/{vehicle}', [AdminVehicleController::class, 'update']);
             Route::delete('/vehicles/{vehicle}', [AdminVehicleController::class, 'destroy']);

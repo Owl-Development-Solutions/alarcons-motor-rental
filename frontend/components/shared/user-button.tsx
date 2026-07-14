@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { LogOut, User } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -18,6 +21,8 @@ import {
 } from "../ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { User as UserModel } from "@/data/models/user.model";
+import { logoutUser } from "@/data/actions/auth";
+import { useUser } from "@/data/context/user-context";
 
 function ListItem({
   title,
@@ -53,8 +58,32 @@ function ListItem({
 }
 
 const UserButton = ({ user }: { user: UserModel }) => {
+  const router = useRouter();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const { setUser } = useUser();
   const firstInitial = user?.first_name?.charAt(0).toUpperCase() ?? "U";
   const secondIinitial = user?.last_name?.charAt(0).toUpperCase() ?? "S";
+
+  const handleSignOut = async () => {
+    if (isSigningOut) return;
+    setIsSigningOut(true);
+
+    try {
+      await logoutUser();
+      setUser(null);
+      toast.success("Signed out successfully.");
+      router.push("/");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to sign out. Please try again.",
+      );
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
+
   return (
     <>
       <NavigationMenu>
@@ -76,10 +105,15 @@ const UserButton = ({ user }: { user: UserModel }) => {
                   icon={User}
                   iconColor="text-blue-900"
                 />
-                <Button className="bg-transparent w-full   hover:bg-red-900">
+                <Button
+                  type="button"
+                  onClick={handleSignOut}
+                  disabled={isSigningOut}
+                  className="bg-transparent w-full hover:bg-red-900"
+                >
                   <div className="flex gap-2 text-center align-center w-full">
                     <LogOut className="text-red-400" />
-                    <span>Sign Out</span>
+                    <span>{isSigningOut ? "Signing out..." : "Sign Out"}</span>
                   </div>
                 </Button>
               </ul>

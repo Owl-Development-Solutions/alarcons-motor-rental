@@ -26,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { loginUser, registerUser } from "@/data/actions/auth";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { useUser } from "@/data/context/user-context";
 
 const inputClasses =
@@ -48,6 +49,7 @@ const AuthForm = ({ type }: { type: Mode }) => {
   const [mode, setMode] = useState<Mode>(type);
   const [rememberMe, setRememberMe] = useState(false);
 
+  const router = useRouter();
   const { setUser } = useUser();
 
   const signInForm = useForm<z.infer<typeof signInFormSchema>>({
@@ -85,6 +87,10 @@ const AuthForm = ({ type }: { type: Mode }) => {
       }
 
       setOpen(false);
+
+      if (res.user?.role === "admin") {
+        router.push("/admin");
+      }
     } catch (error: unknown) {
       toast.error(
         error instanceof Error
