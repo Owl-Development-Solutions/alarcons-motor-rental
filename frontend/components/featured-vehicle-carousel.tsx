@@ -9,12 +9,7 @@ import {
   CarouselPrevious,
 } from "./ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-
-interface data {
-  id: number;
-  path: string;
-  name: string;
-}
+import { data } from "@/data/models/image.model";
 
 const FeaturedVehicleCarousel = () => {
   //hardcoded for now
@@ -32,7 +27,7 @@ const FeaturedVehicleCarousel = () => {
   ];
 
   return (
-    <div className="relative w-full max-w-[500px] aspect-square  ">
+    <div className="relative w-full max-w-125 aspect-square  ">
       <Carousel
         opts={{
           loop: true,
