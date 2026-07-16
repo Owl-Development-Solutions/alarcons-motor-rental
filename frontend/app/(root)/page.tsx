@@ -5,7 +5,6 @@ import Footer from "@/components/landing/footer";
 import Hero from "@/components/landing/hero";
 import Navbar from "@/components/landing/navbar";
 import Section from "@/components/landing/section";
-import { getVehicles } from "@/data/actions/vehicle";
 
 const HomePage = async () => {
   return (
