@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController; //for admin vehicle controller
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,13 +29,19 @@ Route::prefix('v1')->group(function () {
     Route::get('/vehicles', [VehicleController::class, 'index']);
     Route::get('/vehicle/{vehicleId}', [VehicleController::class, 'show']);
 
-
+    // Authenticated (any logged-in user)
     Route::middleware('auth:sanctum')->group(function() {
 
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
         Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
         Route::put('/auth/profile', [AuthController::class, 'updateProfile']);
+
+        Route::get('/bookings', [BookingController::class, 'index']);
+        Route::post('/bookings', [BookingController::class, 'store']);
+        Route::get('/bookings/{booking}', [BookingController::class, 'show']);
+        Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel']);
+
 
 
 
@@ -43,8 +51,19 @@ Route::prefix('v1')->group(function () {
             Route::post('/vehicles', [AdminVehicleController::class, 'store']);
             Route::put('/vehicles/{vehicle}', [AdminVehicleController::class, 'update']);
             Route::delete('/vehicles/{vehicle}', [AdminVehicleController::class, 'destroy']);
+           
+
+            // Hit immediately by the frontend on each UploadThing success/removal
+            // so image state stays in sync without a separate "save" step.
             Route::post('/vehicles/{vehicle}/images', [AdminVehicleController::class, 'addImage']);
             Route::delete('/vehicles/{vehicle}/images', [AdminVehicleController::class, 'removeImage']);
+
+        
+            Route::get('/bookings', [AdminBookingController::class, 'index']);
+            Route::post('/bookings/{booking}/confirm', [AdminBookingController::class, 'confirm']);
+            Route::post('/bookings/{booking}/cancel', [AdminBookingController::class, 'cancel']);
+        
+        
         });
 
     });

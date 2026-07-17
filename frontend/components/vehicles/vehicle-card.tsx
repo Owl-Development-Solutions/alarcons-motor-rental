@@ -52,6 +52,10 @@ const VehicleCard = ({ vehicle, onBook }: VehicleCardProps) => {
   const isAvailable = status === "available";
   const isMotor = vehicle_type === "motorcycle";
 
+  const handleBook = (id: number) => {
+    console.log(id);
+  };
+
   return (
     <Link
       href={`/vehicle/${vehicle.id}`}
@@ -160,7 +164,7 @@ const VehicleCard = ({ vehicle, onBook }: VehicleCardProps) => {
             className={`${
               isAvailable ? "bg-linear-to-r from-orange-500 to-orange-600" : ""
             } cursor-pointer`}
-            onClick={() => onBook?.(vehicle)}
+            onClick={() => handleBook(vehicle.id)}
           >
             {isAvailable ? bookLabel(vehicle_type) : "Unavailable"}
           </Button>

@@ -9,38 +9,33 @@ class Booking extends Model
 {
     use HasFactory;
 
-    public const STATUS_PENDING_PAYMENT = 'pending_payment';
-    public const STATUS_PAYMENT_SUBMITTED = 'payment_submitted';
+    // Payment is handled in person (meet-up) for now — no payment-proof
+    // states involved. Admin confirms manually once payment is received.
+    public const STATUS_PENDING = 'pending';
     public const STATUS_CONFIRMED = 'confirmed';
-    public const STATUS_PAYMENT_REJECTED = 'payment_rejected';
     public const STATUS_ACTIVE = 'active';
     public const STATUS_COMPLETED = 'completed';
     public const STATUS_CANCELLED = 'cancelled';
 
     /**
-     * Statuses that should still "hold" a car's dates.
-     * This is the key to the double-booking fix: a car with a
-     * pending_payment or payment_submitted booking blocks the same
-     * dates, not just confirmed ones.
+     * Statuses that should still "hold" a vehicle's dates — used to
+     * block overlapping bookings on the same vehicle.
      */
     public const BLOCKING_STATUSES = [
-        self::STATUS_PENDING_PAYMENT,
-        self::STATUS_PAYMENT_SUBMITTED,
+        self::STATUS_PENDING,
         self::STATUS_CONFIRMED,
         self::STATUS_ACTIVE,
     ];
- 
+
     protected $fillable = [
-        'user_id', 
-        'car_id', 
-        'pickup_datetime', 
-        'dropoff_datetime',
-        'total_days', 
-        'daily_rate', 
-        'total_amount', 
-        'status',
+        'user_id', 'vehicle_id', 'pickup_datetime', 'dropoff_datetime',
+        'total_days', 'daily_rate', 'total_amount', 'status',
+
+        // Checkout / billing details
+        'first_name', 'last_name', 'company_name', 'country',
+        'street_address', 'city', 'postcode', 'phone', 'email', 'order_notes',
     ];
- 
+
     protected function casts(): array
     {
         return [
@@ -55,34 +50,26 @@ class Booking extends Model
     {
         return $this->belongsTo(User::class);
     }
- 
-    public function car()
+
+    public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);
     }
- 
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
-    }
- 
-    public function latestPayment()
-    {
-        return $this->hasOne(Payment::class)->latestOfMany();
-    }
 
     /**
-     * Bookings on a given car whose date range overlaps the given
-     * pickup/dropoff window AND whose status still holds the car.
-     * Used both when creating a new booking and anywhere else you
-     * need to check real availability.
+     * Bookings on a given vehicle whose date range overlaps the given
+     * pickup/dropoff window AND whose status still holds the vehicle.
      */
-    public function scopeOverlapping($query, int $carId, $pickup, $dropoff)
+    public function scopeOverlapping($query, int $vehicleId, $pickup, $dropoff)
     {
-        return $query->where('car_id', $carId)
+        return $query->where('vehicle_id', $vehicleId)
             ->whereIn('status', self::BLOCKING_STATUSES)
             ->where('pickup_datetime', '<', $dropoff)
             ->where('dropoff_datetime', '>', $pickup);
     }
 
+    public function getFullNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->last_name}");
+    }
 }
