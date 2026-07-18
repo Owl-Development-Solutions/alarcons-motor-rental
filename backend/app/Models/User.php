@@ -67,6 +67,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Booking::class);
     }
+
+    public static function admins()
+    {
+        return static::where('role', self::ROLE_ADMIN)->get();
+    }
  
     public function reviewedPayments()
     {

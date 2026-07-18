@@ -14,6 +14,10 @@ export interface VehicleResponse {
   total: number;
 }
 
+export interface VehicleDetailResponse {
+  data: Vehicle;
+}
+
 export interface Vehicle {
   id: number;
   make: string;

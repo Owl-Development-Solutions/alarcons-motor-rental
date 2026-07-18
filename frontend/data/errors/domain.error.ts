@@ -12,6 +12,12 @@ export function toDomainError(err: unknown): CarRentalErrors.DomainError {
     const data = err.response?.data;
 
     switch (status) {
+      case 400:
+        return new CarRentalErrors.BookingError(
+          data?.message ?? "This booking request is invalid.",
+          400,
+        );
+
       case 401:
         return new CarRentalErrors.UnauthorizedError(
           data?.message ?? "Unauthorized",
@@ -19,6 +25,13 @@ export function toDomainError(err: unknown): CarRentalErrors.DomainError {
 
       case 404:
         return new CarRentalErrors.NotFoundError(data?.resource ?? "Resource");
+
+      case 409:
+        return new CarRentalErrors.BookingError(
+          data?.message ??
+            "This vehicle is already booked for the selected dates.",
+          409,
+        );
 
       case 422:
         return new CarRentalErrors.ValidationError(
