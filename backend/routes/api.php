@@ -29,6 +29,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/vehicles', [VehicleController::class, 'index']);
     Route::get('/vehicle/{vehicleId}', [VehicleController::class, 'show']);
 
+    // Guest can also do the bookings..
+    Route::post('/bookings', [BookingController::class, 'store']);
+
     // Authenticated (any logged-in user)
     Route::middleware('auth:sanctum')->group(function() {
 
@@ -38,7 +41,6 @@ Route::prefix('v1')->group(function () {
         Route::put('/auth/profile', [AuthController::class, 'updateProfile']);
 
         Route::get('/bookings', [BookingController::class, 'index']);
-        Route::post('/bookings', [BookingController::class, 'store']);
         Route::get('/bookings/{booking}', [BookingController::class, 'show']);
         Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel']);
 

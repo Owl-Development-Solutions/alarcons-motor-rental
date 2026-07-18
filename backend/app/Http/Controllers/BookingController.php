@@ -35,7 +35,6 @@ class BookingController extends Controller
 
         return response()->json([
             'message' => 'Booking placed. We\'ll contact you to confirm — payment is settled in person.',
-            'data' => $booking,
         ], 201);
     }
 
