@@ -164,7 +164,6 @@ const VehicleCard = ({ vehicle, onBook }: VehicleCardProps) => {
             className={`${
               isAvailable ? "bg-linear-to-r from-orange-500 to-orange-600" : ""
             } cursor-pointer`}
-            onClick={() => handleBook(vehicle.id)}
           >
             {isAvailable ? bookLabel(vehicle_type) : "Unavailable"}
           </Button>

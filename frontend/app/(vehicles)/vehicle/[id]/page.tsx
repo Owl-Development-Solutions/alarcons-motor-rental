@@ -30,10 +30,6 @@ const VehicleDetail = async (props: { params: Promise<{ id: string }> }) => {
 
   const countryData = await getCountries();
 
-  console.log(countryData);
-
-  console.log(data);
-
   return (
     <>
       <VehicleDetailStepper vehicle={data} country={countryData} />

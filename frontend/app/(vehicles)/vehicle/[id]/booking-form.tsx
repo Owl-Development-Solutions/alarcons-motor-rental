@@ -61,7 +61,6 @@ const BookingForm = ({
       ...values,
       vehicle_id: vehicle.id,
     };
-    console.log(data);
 
     try {
       const res = await createBooking(data);
