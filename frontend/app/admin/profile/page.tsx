@@ -40,7 +40,7 @@ export default function AdminProfilePage() {
     const loadUser = async () => {
       try {
         const res = await getCurrentUser();
-        setUser(res.user);
+        setUser(res?.user);
       } catch {
         toast.error("Unable to load profile data.");
       } finally {
@@ -51,11 +51,11 @@ export default function AdminProfilePage() {
     loadUser();
   }, [user, setUser]);
 
-  const handleChange = (field: keyof typeof formData) => (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setFormData((prev) => ({ ...prev, [field]: event.target.value }));
-  };
+  const handleChange =
+    (field: keyof typeof formData) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, [field]: event.target.value }));
+    };
 
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -106,7 +106,9 @@ export default function AdminProfilePage() {
           </div>
           <div>
             <p className="text-sm text-slate-400">Account</p>
-            <p className="text-lg font-semibold">{user.first_name} {user.last_name}</p>
+            <p className="text-lg font-semibold">
+              {user.first_name} {user.last_name}
+            </p>
           </div>
         </div>
       </div>

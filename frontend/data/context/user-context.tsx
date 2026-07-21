@@ -4,15 +4,15 @@ import { createContext, useContext, useState } from "react";
 import { User } from "../models/user.model";
 
 const UserContext = createContext<{
-  user: User | null;
-  setUser: (u: User | null) => void;
+  user: User | null | undefined;
+  setUser: (u: User | null | undefined) => void;
 } | null>(null);
 
 export function UserProvider({
   initialUser,
   children,
 }: {
-  initialUser: User | null;
+  initialUser: User | null | undefined;
   children: React.ReactNode;
 }) {
   const [user, setUser] = useState(initialUser);

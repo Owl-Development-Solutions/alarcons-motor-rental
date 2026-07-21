@@ -29,6 +29,13 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/data/context/user-context";
 
+type AuthFormProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  type: Mode;
+  showTrigger?: boolean;
+};
+
 const inputClasses =
   "border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500";
 
@@ -44,8 +51,12 @@ const styleSucces = {
   padding: "12px 16px",
 };
 
-const AuthForm = ({ type }: { type: Mode }) => {
-  const [open, setOpen] = useState(false);
+const AuthForm = ({
+  type,
+  onOpenChange,
+  open,
+  showTrigger = true,
+}: AuthFormProps) => {
   const [mode, setMode] = useState<Mode>(type);
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -86,7 +97,7 @@ const AuthForm = ({ type }: { type: Mode }) => {
         });
       }
 
-      setOpen(false);
+      onOpenChange(false);
 
       if (res.user?.role === "admin") {
         router.push("/admin");
@@ -112,7 +123,7 @@ const AuthForm = ({ type }: { type: Mode }) => {
         });
       }
 
-      setOpen(false);
+      onOpenChange(false);
     } catch (error: unknown) {
       toast.error(
         error instanceof Error
@@ -130,7 +141,7 @@ const AuthForm = ({ type }: { type: Mode }) => {
   // reset the relevant form + go back to the trigger's original mode
   // whenever the dialog is closed, so it doesn't reopen mid-toggle
   const handleOpenChange = (next: boolean) => {
-    setOpen(next);
+    onOpenChange(next);
     signInForm.reset();
     signUpForm.reset();
     setMode("Login");
@@ -138,9 +149,13 @@ const AuthForm = ({ type }: { type: Mode }) => {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger className="py-2 rounded-md w-20 bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 ">
-        <span>{type}</span>
-      </DialogTrigger>
+      {showTrigger ? (
+        <DialogTrigger className="py-2 rounded-md w-20 bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 ">
+          <span>{type}</span>
+        </DialogTrigger>
+      ) : (
+        <></>
+      )}
 
       <DialogContent className="sm:max-w-120 max-h-screen  bg-[#111729] overflow-x-auto">
         {mode === "Login" ? (

@@ -1,14 +1,24 @@
 "use client";
 
 import { useUser } from "@/data/context/user-context";
-import { Car, MessageSquare, Settings } from "lucide-react";
+import { Car, MessageSquare, NotebookPen, Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import UserButton from "../shared/user-button";
 import AuthForm from "../auth/auth-form";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const VehicleNavbar = () => {
+  const [open, setOpen] = useState(false);
   const { user } = useUser();
+  const pathName = usePathname();
+
+  const isActive = (path: string) => {
+    if (path === "/") return pathName === "/";
+    return pathName.startsWith(path);
+  };
 
   return (
     <header className="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50">
@@ -31,23 +41,38 @@ const VehicleNavbar = () => {
           <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/"
-              className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
+              className={cn(
+                "font-medium transition-colors",
+                isActive("/")
+                  ? "text-orange-600 dark:text-orange-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400",
+              )}
             >
               Home
             </Link>
             <Link
-              href="/vehicles"
-              className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2"
+              href="/booking"
+              className={cn(
+                "font-medium transition-colors flex items-center gap-2",
+                isActive("/booking")
+                  ? "text-orange-600 dark:text-orange-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400",
+              )}
             >
-              <Car className="w-4 h-4" />
-              Booking
+              <NotebookPen className="w-4 h-4" />
+              Bookings
             </Link>
             <Link
-              href="/feedback"
-              className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium flex items-center gap-2"
+              href="/vehicles"
+              className={cn(
+                "font-medium transition-colors  flex items-center gap-2",
+                isActive("/vehicles")
+                  ? "text-orange-600 dark:text-orange-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400",
+              )}
             >
-              <MessageSquare className="w-4 h-4" />
-              Feedback
+              <Car className="w-4 h-4" />
+              Vehicles
             </Link>
             <div className="relative">
               {user ? (
@@ -56,7 +81,7 @@ const VehicleNavbar = () => {
                 </>
               ) : (
                 <>
-                  <AuthForm type="Login" />
+                  <AuthForm type="Login" onOpenChange={setOpen} open={open} />
                 </>
               )}
 

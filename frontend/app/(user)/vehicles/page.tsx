@@ -15,7 +15,7 @@ const VehiclePage = async () => {
       {/* List of Vehicles */}
       <div className="mx-auto max-w-6xl p-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-neutral-900">
+          <h1 className="text-2xl font-bold text-[#e68823]">
             Available vehicles
           </h1>
           <p className="text-sm text-neutral-500">
