@@ -1,5 +1,4 @@
 import VehicleNavbar from "@/components/vehicles/v-navbar";
-import VehicleCarousel from "@/components/vehicles/vehicle-carousel";
 
 export default async function RootLayout({
   children,

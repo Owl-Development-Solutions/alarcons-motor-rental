@@ -37,8 +37,15 @@ const navLinks = [
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const { user } = useUser();
+
+  if (user) {
+    console.log("user is here");
+  } else {
+    console.log("no user");
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -106,7 +113,7 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <AuthForm type="Login" />
+                  <AuthForm type="Login" onOpenChange={setOpen} open={open} />
                 </>
               )}
             </ul>
@@ -147,7 +154,7 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <AuthForm type="Login" />
+                    <AuthForm type="Login" onOpenChange={setOpen} open={open} />
                   </>
                 )}
                 <SheetDescription></SheetDescription>

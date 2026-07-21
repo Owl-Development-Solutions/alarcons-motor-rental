@@ -15,14 +15,16 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [activeView, setActiveView] = useState<"profile" | "picture">("profile");
+  const [activeView, setActiveView] = useState<"profile" | "picture">(
+    "profile",
+  );
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
       try {
         const res = await getCurrentUser();
-        setUser(res.user);
+        setUser(res?.user);
       } catch {
         toast.error("Unable to load profile data.");
       } finally {
@@ -99,7 +101,8 @@ export default function ProfilePage() {
             <div>
               <h1 className="text-3xl font-semibold">My Profile</h1>
               <p className="mt-2 text-slate-400">
-                Here you can view your registered details and update your password.
+                Here you can view your registered details and update your
+                password.
               </p>
             </div>
             <div className="flex gap-2 rounded-lg border border-slate-800 bg-slate-950 p-1">

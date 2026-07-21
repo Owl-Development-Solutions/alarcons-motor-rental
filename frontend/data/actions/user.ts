@@ -4,13 +4,26 @@ import { cookies } from "next/headers";
 import { toDomainError } from "../errors/domain.error";
 import { serverFetch } from "../models";
 import { GetUserResponse } from "../models/user.model";
+import { CarRentalErrors } from "../errors/car-rental.errors";
 
-export const getCurrentUser = async (): Promise<GetUserResponse> => {
+export const getCurrentUser = async (): Promise<GetUserResponse | null> => {
+  const token = (await cookies()).get("auth_token")?.value;
+
+  // No token means user isn't signed in.
+  if (!token) {
+    return null;
+  }
+
   try {
-    const token = (await cookies()).get("auth_token")?.value;
-    const res = await serverFetch<GetUserResponse>("/me", {}, token);
-    return res;
+    return await serverFetch<GetUserResponse>("/me", {}, token);
   } catch (error) {
-    throw toDomainError(error);
+    const domainError = toDomainError(error);
+
+    // Token is invalid or expired.
+    if (domainError instanceof CarRentalErrors.UnauthorizedError) {
+      return null;
+    }
+
+    throw domainError;
   }
 };

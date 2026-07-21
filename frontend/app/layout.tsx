@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { getCurrentUser } from "@/data/actions/user";
 import { UserProvider } from "@/data/context/user-context";
-import { getVehicles } from "@/data/actions/vehicle";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +23,7 @@ export default async function RootLayout({
 
   try {
     const res = await getCurrentUser();
-    user = res.user;
+    user = res?.user;
   } catch {
     // not logged in / invalid token — user stays null
   }
@@ -35,7 +35,10 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <UserProvider initialUser={user}>{children}</UserProvider>
+        <UserProvider initialUser={user}>
+          <NextTopLoader color="orange" />
+          {children}
+        </UserProvider>
         <Toaster />
       </body>
     </html>
