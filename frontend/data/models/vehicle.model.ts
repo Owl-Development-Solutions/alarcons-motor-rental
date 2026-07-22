@@ -1,17 +1,7 @@
-export interface VehicleResponse {
-  current_page: number;
+import { Paginated } from "./paginated.model";
+
+export interface VehicleResponse extends Paginated {
   data: Vehicle[];
-  first_page_url: string;
-  from: number;
-  last_page: number;
-  last_page_url: string;
-  link: VehicleReponseLinks[];
-  next_page_url: string | null;
-  path: string;
-  per_page: number;
-  prev_page_url: string | null;
-  to: number;
-  total: number;
 }
 
 export interface VehicleDetailResponse {
@@ -42,13 +32,6 @@ export interface Vehicle {
   insurance: VehicleInsurance;
   created_at: string;
   updated_at: string;
-}
-
-export interface VehicleReponseLinks {
-  url: string;
-  label: string;
-  page: number;
-  active: boolean;
 }
 
 export interface VehicleInsurance {

@@ -10,15 +10,34 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+const navItems = [
+  {
+    label: "Home",
+    href: "/",
+    match: ["/"],
+  },
+  {
+    label: "Bookings",
+    href: "/booking",
+    match: ["/booking"],
+    icon: NotebookPen,
+  },
+  {
+    label: "Vehicles",
+    href: "/vehicles",
+    match: ["/vehicles", "/vehicle"],
+    icon: Car,
+  },
+];
 const VehicleNavbar = () => {
   const [open, setOpen] = useState(false);
   const { user } = useUser();
   const pathName = usePathname();
 
-  const isActive = (path: string) => {
-    if (path === "/") return pathName === "/";
-    return pathName.startsWith(path);
-  };
+  const isActive = (matches: string[]) =>
+    matches.some((path) =>
+      path === "/" ? pathName === "/" : pathName.startsWith(path),
+    );
 
   return (
     <header className="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50">
@@ -39,41 +58,21 @@ const VehicleNavbar = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/"
-              className={cn(
-                "font-medium transition-colors",
-                isActive("/")
-                  ? "text-orange-600 dark:text-orange-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400",
-              )}
-            >
-              Home
-            </Link>
-            <Link
-              href="/booking"
-              className={cn(
-                "font-medium transition-colors flex items-center gap-2",
-                isActive("/booking")
-                  ? "text-orange-600 dark:text-orange-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400",
-              )}
-            >
-              <NotebookPen className="w-4 h-4" />
-              Bookings
-            </Link>
-            <Link
-              href="/vehicles"
-              className={cn(
-                "font-medium transition-colors  flex items-center gap-2",
-                isActive("/vehicles")
-                  ? "text-orange-600 dark:text-orange-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400",
-              )}
-            >
-              <Car className="w-4 h-4" />
-              Vehicles
-            </Link>
+            {navItems.map(({ label, href, match, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "font-medium transition-colors flex items-center gap-2",
+                  isActive(match)
+                    ? "text-orange-600 dark:text-orange-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400",
+                )}
+              >
+                {Icon && <Icon className="w-4 h-4" />}
+                {label}
+              </Link>
+            ))}
             <div className="relative">
               {user ? (
                 <>

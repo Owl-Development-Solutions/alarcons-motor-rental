@@ -1,3 +1,4 @@
+import { Paginated } from "./paginated.model";
 import { User } from "./user.model";
 import { Vehicle } from "./vehicle.model";
 
@@ -24,8 +25,8 @@ export interface Booking {
   id: number;
   user_id: number;
   vehicle_id: number;
-  pickup_datetime: string;
-  dropoff_datetime: string;
+  pickup_datetime: Date;
+  dropoff_datetime: Date;
   total_days: number;
   daily_rate: number;
   total_amount: number;
@@ -42,8 +43,8 @@ export interface Booking {
   email: string;
   order_notes: string | null;
 
-  created_at: string;
-  updated_at: string;
+  created_at: Date;
+  updated_at: Date;
 
   vehicle?: Vehicle;
   user?: User;
@@ -64,4 +65,8 @@ export interface CreateBookingInput {
   phone: string;
   email: string;
   order_notes?: string | null;
+}
+
+export interface GetUserBookingResponse extends Paginated {
+  data: Booking[];
 }

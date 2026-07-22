@@ -42,14 +42,19 @@ export const loginUser = async (data: LoginUser): Promise<LoginResponse> => {
 };
 
 export const logoutUser = async (): Promise<{ message: string }> => {
-  try {
-    const res = await serverFetch<{ message: string }>("/logout", {
-      method: "POST",
-    });
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth_token")?.value;
 
-    (await cookies()).delete("auth_token");
+  try {
+    const res = await serverFetch<{ message: string }>(
+      "/logout",
+      { method: "POST" },
+      token,
+    );
+    cookieStore.delete("auth_token");
     return res;
   } catch (error) {
+    cookieStore.delete("auth_token");
     throw toDomainError(error);
   }
 };
@@ -60,8 +65,8 @@ export const changePassword = async (data: {
   new_password_confirmation: string;
 }): Promise<{ message: string }> => {
   try {
-    return await serverFetch<{ message: string }>('/auth/change-password', {
-      method: 'POST',
+    return await serverFetch<{ message: string }>("/auth/change-password", {
+      method: "POST",
       data,
     });
   } catch (error) {
@@ -69,23 +74,25 @@ export const changePassword = async (data: {
   }
 };
 
-export const updateProfile = async (data: Partial<{
-  first_name: string;
-  middle_name: string | null;
-  last_name: string;
-  birth_date: string | null;
-  gender: string | null;
-  username: string;
-  email: string;
-  phone_number: string;
-  address: string;
-  drivers_license_number: string | null;
-  license_expiry: string | null;
-  license_image: string | null;
-}>): Promise<{ message: string; user: any }> => {
+export const updateProfile = async (
+  data: Partial<{
+    first_name: string;
+    middle_name: string | null;
+    last_name: string;
+    birth_date: string | null;
+    gender: string | null;
+    username: string;
+    email: string;
+    phone_number: string;
+    address: string;
+    drivers_license_number: string | null;
+    license_expiry: string | null;
+    license_image: string | null;
+  }>,
+): Promise<{ message: string; user: any }> => {
   try {
-    return await serverFetch<{ message: string; user: any }>('/auth/profile', {
-      method: 'PUT',
+    return await serverFetch<{ message: string; user: any }>("/auth/profile", {
+      method: "PUT",
       data,
     });
   } catch (error) {

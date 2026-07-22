@@ -5,13 +5,6 @@ import { LogOut, User } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -60,7 +53,7 @@ function ListItem({
 const UserButton = ({ user }: { user: UserModel }) => {
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const { setUser } = useUser();
+  const { setUser, refresh } = useUser();
   const firstInitial = user?.first_name?.charAt(0).toUpperCase() ?? "U";
   const secondIinitial = user?.last_name?.charAt(0).toUpperCase() ?? "S";
 
@@ -72,7 +65,7 @@ const UserButton = ({ user }: { user: UserModel }) => {
       await logoutUser();
       setUser(null);
       toast.success("Signed out successfully.");
-      router.push("/");
+      // router.push("/");
     } catch (error: unknown) {
       toast.error(
         error instanceof Error

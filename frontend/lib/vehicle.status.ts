@@ -1,4 +1,4 @@
-import { VehicleStatus } from "@/data/models";
+import { BookingStatus, VehicleStatus } from "@/data/models";
 
 export function toKnownStatus(status: string): VehicleStatus {
   if (
@@ -28,4 +28,15 @@ export const STATUS_BANNER_CLASSES: Record<
   reserved: "bg-orange-50 text-orange-700 border border-orange-200",
   maintenance: "bg-yellow-50 text-yellow-700 border border-yellow-200",
   unavailable: "bg-gray-100 text-gray-600 border border-gray-200",
+};
+
+export const STATUS_BADGE_VARIANT: Record<
+  BookingStatus,
+  "default" | "secondary" | "destructive" | "outline"
+> = {
+  pending: "secondary",
+  confirmed: "default",
+  active: "default",
+  completed: "outline",
+  cancelled: "destructive",
 };
