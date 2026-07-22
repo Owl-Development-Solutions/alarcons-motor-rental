@@ -155,12 +155,32 @@ class BookingService
         return Booking::overlapping($vehicleId, $pickup, $dropoff)->exists();
     }
 
-    public function getUserBookings(User $user)
+    public function getUserBookings(User $user, int $perPage = 10, int $page = 1)
     {
+        $this->claimGuestBookings($user);
+
         return $user->bookings()
             ->with('vehicle')
             ->latest()
-            ->get();
+            ->paginate($perPage, ['*'], 'page', $page);
+    }
+
+    /**
+     * Links any past guest bookings (user_id null) that used this user's
+     * email to their account, so registering/logging in with the same
+     * email as a previous guest booking surfaces that history under
+     * their account from now on — and so show()/cancel() (which scope
+     * strictly by user_id) work on those bookings too, with no extra
+     * OR-condition needed anywhere else.
+     */
+    private function claimGuestBookings(User $user): void
+    {
+        DB::transaction(function () use ($user) {
+            Booking::where('user_id', null)
+                ->where('email', $user->email)
+                ->lockForUpdate()
+                ->update(['user_id' => $user->id]);
+        });
     }
 
     public function getBookingForUser(User $user, int $bookingId): Booking
@@ -178,38 +198,35 @@ class BookingService
     }
 
     /**
-     * Guest lookup — since guests have no account, they identify
-     * themselves with the email used at checkout.
+     * Permanently removes a booking from the user's history. Only
+     * allowed once it's already resolved (cancelled/completed) — a
+     * pending/confirmed booking must be cancelled first, so there's
+     * always a record an admin can still see while it's active.
      */
-    public function getBookingForEmail(int $bookingId, string $email): Booking
+    public function deleteBookingForUser(User $user, int $bookingId): void
     {
-        $booking = Booking::with('vehicle')
-            ->where('id', $bookingId)
-            ->where('email', $email)
+        $booking = Booking::where('id', $bookingId)
+            ->where('user_id', $user->id)
             ->first();
 
         if (! $booking) {
             throw new BookingException('Booking not found.', 404);
         }
 
-        return $booking;
+        if (! in_array($booking->status, [Booking::STATUS_CANCELLED, Booking::STATUS_COMPLETED])) {
+            throw new BookingException('Cancel this booking before deleting it.');
+        }
+
+        $booking->delete();
     }
 
     public function cancelBooking(User $user, int $bookingId): Booking
     {
-        return $this->cancelBookingMatching($bookingId, fn ($query) => $query->where('user_id', $user->id));
-    }
-
-    public function cancelBookingForEmail(int $bookingId, string $email): Booking
-    {
-        return $this->cancelBookingMatching($bookingId, fn ($query) => $query->where('email', $email));
-    }
-
-    private function cancelBookingMatching(int $bookingId, callable $scope): Booking
-    {
-        return DB::transaction(function () use ($bookingId, $scope) {
-            $query = Booking::where('id', $bookingId)->lockForUpdate();
-            $booking = $scope($query)->first();
+        return DB::transaction(function () use ($user, $bookingId) {
+            $booking = Booking::where('id', $bookingId)
+                ->where('user_id', $user->id)
+                ->lockForUpdate()
+                ->first();
 
             if (! $booking) {
                 throw new BookingException('Booking not found.', 404);

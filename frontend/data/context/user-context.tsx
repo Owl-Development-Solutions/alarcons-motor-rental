@@ -1,11 +1,13 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useTransition } from "react";
 import { User } from "../models/user.model";
 
 const UserContext = createContext<{
   user: User | null | undefined;
   setUser: (u: User | null | undefined) => void;
+  isRefreshing: boolean;
+  refresh: (fn: () => void) => void;
 } | null>(null);
 
 export function UserProvider({
@@ -16,9 +18,12 @@ export function UserProvider({
   children: React.ReactNode;
 }) {
   const [user, setUser] = useState(initialUser);
+  const [isRefreshing, startTransition] = useTransition();
+
+  const refresh = (fn: () => void) => startTransition(fn);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, isRefreshing, refresh }}>
       {children}
     </UserContext.Provider>
   );

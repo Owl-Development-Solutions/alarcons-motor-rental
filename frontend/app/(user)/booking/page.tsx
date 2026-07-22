@@ -1,14 +1,18 @@
-import AuthForm from "@/components/auth/auth-form";
+import BookingTable from "@/components/booking/booking-table";
 import SignedOutBookingState from "@/components/booking/signed-out-booking";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { getUserOrGuestBooking } from "@/data/actions/booking";
 import { getCurrentUser } from "@/data/actions/user";
-import { useUser } from "@/data/context/user-context";
-import { LogIn } from "lucide-react";
 
-const Booking = async () => {
+const Booking = async (props: {
+  searchParams: Promise<{
+    page?: number;
+  }>;
+}) => {
+  const { page } = await props.searchParams;
+
   const user = await getCurrentUser();
 
-  const bookings = [];
+  const res = await getUserOrGuestBooking(page);
 
   return (
     <div className=" max-w-6xl mx-auto p-4">
@@ -18,12 +22,14 @@ const Booking = async () => {
 
       {!user ? (
         <SignedOutBookingState />
-      ) : bookings.length === 0 ? (
+      ) : res!.data.length === 0 ? (
         <p className="text-sm text-gray-500 dark:text-gray-400 py-10 text-center">
           You don't have any bookings yet.
         </p>
       ) : (
-        <div className="flex flex-col gap-3">{/* @todo table here */}</div>
+        <div className="flex flex-col gap-3">
+          <BookingTable bookings={res!.data} />
+        </div>
       )}
     </div>
   );
