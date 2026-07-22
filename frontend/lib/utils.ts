@@ -91,3 +91,53 @@ export function getPageRange(
 
   return result;
 }
+
+export const vehicleAvailabilityConfig = {
+  available: {
+    label: "Available",
+    className:
+      "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-900",
+  },
+  rented: {
+    label: "Rented",
+    className:
+      "bg-orange-100 text-orange-800 hover:bg-orange-100 dark:bg-orange-900 dark:text-orange-300 dark:hover:bg-orange-900",
+  },
+  reserved: {
+    label: "Reserved",
+    className:
+      "bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-900",
+  },
+  maintenance: {
+    label: "Maintenance",
+    className:
+      "bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900 dark:text-amber-300 dark:hover:bg-amber-900",
+  },
+  unavailable: {
+    label: "Unavailable",
+    className:
+      "bg-red-100 text-red-800 hover:bg-red-100 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-900",
+  },
+} as const;
+
+export type VehicleAvailability = keyof typeof vehicleAvailabilityConfig;
+
+export const vehicleStatusConfig = {
+  active: {
+    label: "Active",
+    className:
+      "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-900",
+  },
+  inactive: {
+    label: "Inactive",
+    className:
+      "bg-gray-100 text-gray-800 hover:bg-gray-100 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-700",
+  },
+  retired: {
+    label: "Retired",
+    className:
+      "bg-red-100 text-red-800 hover:bg-red-100 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-900",
+  },
+} as const;
+
+export type VehicleStatus = keyof typeof vehicleStatusConfig;

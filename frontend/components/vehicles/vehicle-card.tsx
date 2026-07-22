@@ -22,6 +22,9 @@ import {
 } from "@/lib/helpers";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import VehicleStatusBadge from "../vehicle-status-badge";
+import VehicleAvailabilityBadge from "../vehicle-availability-badge";
+import { formatCurrency } from "@/lib/utils";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -44,12 +47,13 @@ const VehicleCard = ({ vehicle, onBook }: VehicleCardProps) => {
     mileage,
     daily_rate,
     currency: currencyCode,
-    status,
+    vehicle_availability,
+    vehicle_status,
     images,
   } = vehicle;
 
   const TypeIcon = TYPE_ICON[vehicle_type] || CarIcon;
-  const isAvailable = status === "available";
+  const isAvailable = vehicle_availability === "available";
   const isMotor = vehicle_type === "motorcycle";
 
   const handleBook = (id: number) => {
@@ -76,11 +80,15 @@ const VehicleCard = ({ vehicle, onBook }: VehicleCardProps) => {
             </div>
           )}
 
-          <Badge
+          {/* <Badge
             className={`absolute left-3 top-3 border font-medium ${STATUS_STYLE[status] || STATUS_STYLE.maintenance}`}
           >
             {STATUS_LABEL[status] || status}
-          </Badge>
+          </Badge> */}
+          <VehicleAvailabilityBadge
+            status={vehicle.vehicle_availability}
+            className="absolute left-3 top-3 border font-medium"
+          />
 
           {images?.length > 1 && (
             <span className="absolute right-3 top-3 rounded-md bg-black/60 px-2 py-0.5 text-xs font-medium text-white">
@@ -115,34 +123,36 @@ const VehicleCard = ({ vehicle, onBook }: VehicleCardProps) => {
           <div className="grid grid-cols-2 gap-2 border-t border-neutral-100 pt-3 text-sm text-orange-100">
             <div className="flex items-center gap-1.5">
               <Settings2 className="h-4 w-4 text-neutral-400" />
-              <span className="capitalize">{transmission}</span>
+              <span className="capitalize text-orange-500">{transmission}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Fuel className="h-4 w-4 text-neutral-400" />
-              <span className="capitalize">{fuel_type}</span>
+              <span className="capitalize text-orange-500">{fuel_type}</span>
             </div>
 
             {isMotor ? (
               <div className="flex items-center gap-1.5">
                 <Gauge className="h-4 w-4 text-neutral-400" />
-                <span>{engine_displacement_cc} cc</span>
+                <span className="text-orange-500">
+                  {engine_displacement_cc} cc
+                </span>
               </div>
             ) : (
               <div className="flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-neutral-400" />
-                <span>{seats} seats</span>
+                <span className="text-orange-500">{seats} seats</span>
               </div>
             )}
 
             {isMotor ? (
               <div className="flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-neutral-400" />
-                <span>{seats} seats</span>
+                <span className="text-orange-500">{seats} seats</span>
               </div>
             ) : (
               <div className="flex items-center gap-1.5">
                 <DoorClosed className="h-4 w-4 text-neutral-400" />
-                <span>{doors} doors</span>
+                <span className="text-orange-500">{doors} doors</span>
               </div>
             )}
           </div>
@@ -155,7 +165,7 @@ const VehicleCard = ({ vehicle, onBook }: VehicleCardProps) => {
         <CardFooter className="flex items-center justify-between gap-3 border-t border-neutral-100 p-4">
           <div>
             <p className="text-lg font-bold leading-none text-orange-400">
-              {currency(daily_rate, currencyCode)}
+              {formatCurrency(vehicle.daily_rate)}
             </p>
             <p className="text-xs text-neutral-400">per day</p>
           </div>

@@ -34,7 +34,8 @@ class UpdateVehicleRequest extends FormRequest
             'mileage' => ['sometimes', 'integer', 'min:0'],
             'daily_rate' => ['sometimes', 'numeric', 'min:0'],
             'currency' => ['sometimes', 'string', 'size:3'],
-            'status' => ['sometimes', 'string', 'in:available,reserved,maintenance,unavailable'],
+            'vehicle_status' => ['sometimes', 'string', 'in:active,inactive,retired'],
+            'vehicle_availability' => ['nullable', 'string', 'in:available,reserved,maintenance,unavailable,rented'],
 
             'features' => ['sometimes', 'array'],
             'features.*' => ['string'],

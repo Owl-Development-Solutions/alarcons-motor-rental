@@ -1,3 +1,4 @@
+import { VehicleAvailability, VehicleStatus } from "@/lib/utils";
 import { Paginated } from "./paginated.model";
 
 export interface VehicleResponse extends Paginated {
@@ -26,7 +27,8 @@ export interface Vehicle {
   mileage: number;
   daily_rate: string;
   currency: string;
-  status: string;
+  vehicle_status: VehicleStatus;
+  vehicle_availability: VehicleAvailability;
   features: string[];
   images: string[];
   insurance: VehicleInsurance;

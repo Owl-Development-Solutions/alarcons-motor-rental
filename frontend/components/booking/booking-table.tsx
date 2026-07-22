@@ -17,7 +17,6 @@ import {
   PAGE_SIZE,
 } from "@/lib/utils";
 import { Badge } from "../ui/badge";
-import { STATUS_BADGE_VARIANT } from "@/lib/vehicle.status";
 import {
   Pagination,
   PaginationContent,
@@ -27,6 +26,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
+import { BOOKING_STATUS_BADGE_VARIANT } from "@/lib/booking.status";
 
 const BookingTable = ({ bookings }: { bookings: Booking[] }) => {
   const [page, setPage] = useState(1);
@@ -74,7 +74,7 @@ const BookingTable = ({ bookings }: { bookings: Booking[] }) => {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={STATUS_BADGE_VARIANT[booking.status]}
+                        variant={BOOKING_STATUS_BADGE_VARIANT[booking.status]}
                         className="capitalize"
                       >
                         {booking.status}

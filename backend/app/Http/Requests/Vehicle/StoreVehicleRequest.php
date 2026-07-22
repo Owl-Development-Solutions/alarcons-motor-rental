@@ -31,7 +31,8 @@ class StoreVehicleRequest extends FormRequest
             'mileage' => ['nullable', 'integer', 'min:0'],
             'daily_rate' => ['required', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'size:3'],
-            'status' => ['nullable', 'string', 'in:available,reserved,maintenance,unavailable'],
+            'vehicle_status' => ['nullable', 'string', 'in:active,inactive,retired'],
+            'vehicle_availability' => ['nullable', 'string', 'in:available,reserved,maintenance,unavailable,rented'],
 
             'features' => ['nullable', 'array'],
             'features.*' => ['string'],
