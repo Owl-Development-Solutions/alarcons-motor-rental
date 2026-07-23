@@ -33,11 +33,15 @@ class StoreVehicleRequest extends FormRequest
             'currency' => ['nullable', 'string', 'size:3'],
             'vehicle_status' => ['nullable', 'string', 'in:active,inactive,retired'],
             'vehicle_availability' => ['nullable', 'string', 'in:available,reserved,maintenance,unavailable,rented'],
+            
+            'description' => ['required', 'string', 'max:255'],
 
             'features' => ['nullable', 'array'],
             'features.*' => ['string'],
 
             'insurance' => ['nullable', 'array'],
+
+
 
             'images' => ['nullable', 'array', 'max:10'],
             'images.*' => ['url', 'max:2048'],

@@ -38,13 +38,39 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { match } from "assert";
 
 const navigation = [
-  { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-  { name: "Vehicle Records", href: "/admin/vehicles", icon: Car },
-  { name: "Booking Records", href: "/admin/bookings", icon: Calendar },
-  { name: "Customers", href: "/admin/customers", icon: Users },
-  { name: "Concerns", href: "/admin/concerns", icon: MessageSquare },
+  {
+    name: "Dashboard",
+    href: "/admin/dashboard",
+    icon: LayoutDashboard,
+    match: ["/admin/dashboard"],
+  },
+  {
+    name: "Vehicle Records",
+    href: "/admin/vehicles",
+    icon: Car,
+    match: ["/admin/vehicles", "/admin/vehicles/add"],
+  },
+  {
+    name: "Booking Records",
+    href: "/admin/bookings",
+    icon: Calendar,
+    match: ["/admin/bookings"],
+  },
+  {
+    name: "Customers",
+    href: "/admin/customers",
+    icon: Users,
+    match: ["/admin/customers"],
+  },
+  {
+    name: "Concerns",
+    href: "/admin/concerns",
+    icon: MessageSquare,
+    match: ["/admin/concerns"],
+  },
 ];
 
 const settingsNav = [
@@ -56,6 +82,12 @@ const settingsNav = [
 export function AppSidebar() {
   const pathname = usePathname();
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const isActive = (matches: string[]) => {
+    return matches.some((path) =>
+      path === "/" ? pathname === "/" : pathname.startsWith(path),
+    );
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -79,15 +111,14 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navigation.map((item) => {
-                const isActive = pathname === item.href;
                 return (
                   <SidebarMenuItem key={item.name}>
                     <SidebarMenuButton
                       render={<Link href={item.href} />}
-                      isActive={isActive}
+                      isActive={isActive(item.match)}
                       tooltip={item.name}
                       className={cn(
-                        `${isActive ? "text-orange-500" : "data-[active=true]:bg-linear-to-r data-[active=true]:from-orange-500 data-[active=true]:to-orange-600 data-[active=true]:text-white data-[active=true]:shadow-lg data-[active=true]:shadow-orange-500/30 hover:text-orange-600 dark:hover:text-orange-400"}`,
+                        `${isActive(item.match) ? "text-orange-500" : "data-[active=true]:bg-linear-to-r data-[active=true]:from-orange-500 data-[active=true]:to-orange-600 data-[active=true]:text-white data-[active=true]:shadow-lg data-[active=true]:shadow-orange-500/30 hover:text-orange-600 dark:hover:text-orange-400"}`,
                       )}
                     >
                       <item.icon />

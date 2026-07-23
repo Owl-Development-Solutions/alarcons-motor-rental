@@ -92,6 +92,16 @@ export function getPageRange(
   return result;
 }
 
+// Generic helper: turns any "config object" shaped like
+// { key: { label: string } } into [{ label, value: key }, ...]
+export function toOptions<T extends Record<string, { label: string }>>(
+  config: T,
+): { label: string; value: keyof T }[] {
+  return (Object.entries(config) as [keyof T, { label: string }][]).map(
+    ([value, { label }]) => ({ label, value }),
+  );
+}
+
 export const vehicleAvailabilityConfig = {
   available: {
     label: "Available",
@@ -141,3 +151,41 @@ export const vehicleStatusConfig = {
 } as const;
 
 export type VehicleStatus = keyof typeof vehicleStatusConfig;
+
+export const carCategoryConfig = {
+  sedan: { label: "Sedan" },
+  suv: { label: "SUV" },
+  hatchback: { label: "Hatchback" },
+  pickup: { label: "Pickup" },
+  van: { label: "Van" },
+} as const;
+
+export const motorcycleCategoryConfig = {
+  scooter: { label: "Scooter" },
+  underbone: { label: "Underbone" },
+  sport: { label: "Sport" },
+  cruiser: { label: "Cruiser" },
+  adventure: { label: "Adventure" },
+} as const;
+
+export type CarCategory = keyof typeof carCategoryConfig;
+export type MotorcycleCategory = keyof typeof motorcycleCategoryConfig;
+export type VehicleCategory = CarCategory | MotorcycleCategory;
+
+export const vehicleTypeConfig = {
+  car: {
+    label: "Car",
+  },
+  motorcycle: {
+    label: "Motorcycle",
+  },
+} as const;
+
+export type VehicleType = keyof typeof vehicleTypeConfig;
+
+export const carCategoryOptions = toOptions(carCategoryConfig);
+export const motorcycleCategoryOptions = toOptions(motorcycleCategoryConfig);
+export const vehicleCategoryOptions = [
+  ...carCategoryOptions,
+  ...motorcycleCategoryOptions,
+];
