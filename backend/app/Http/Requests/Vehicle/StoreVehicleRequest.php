@@ -25,7 +25,7 @@ class StoreVehicleRequest extends FormRequest
             'transmission' => ['required', 'string', 'in:automatic,manual'],
             'fuel_type' => ['required', 'string', 'max:255'],
             'seats' => ['nullable', 'integer', 'min:1', 'max:20'],
-            'doors' => ['nullable', 'integer', 'min:1', 'max:6'],
+            'doors' => ['nullable', 'integer', 'min:0', 'max:6'],
             'engine_displacement_cc' => ['nullable', 'integer', 'min:1', 'max:10000'],
             'color' => ['required', 'string', 'max:255'],
             'mileage' => ['nullable', 'integer', 'min:0'],

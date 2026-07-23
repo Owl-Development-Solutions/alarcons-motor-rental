@@ -5,6 +5,7 @@ import { toDomainError } from "../errors/domain.error";
 import { serverFetch } from "../models";
 import { LoginUser, RegisterUser } from "../models/auth";
 import { LoginResponse } from "../models/user.model";
+import { redirect } from "next/navigation";
 
 export const registerUser = async (
   data: RegisterUser,

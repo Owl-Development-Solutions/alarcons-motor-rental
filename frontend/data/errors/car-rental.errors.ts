@@ -11,15 +11,15 @@ export namespace CarRentalErrors {
   }
 
   export class NetworkError extends DomainError {
-    constructor(message = "Network request faile", statusCode?: number) {
+    constructor(message = "Network request failed", statusCode?: number) {
       super(message, "NETWORK_ERROR", statusCode);
       this.name = "NetworkError";
     }
   }
 
   export class NotFoundError extends DomainError {
-    constructor(resource = "Resource") {
-      super(`${resource} not found`, "NOT_FOUND", 404);
+    constructor(message = "Resource not found") {
+      super(message, "NOT_FOUND", 404);
       this.name = "NotFoundError";
     }
   }
@@ -28,6 +28,13 @@ export namespace CarRentalErrors {
     constructor(message = "Unauthorized") {
       super(message, "UNAUTHORIZED", 401);
       this.name = "UnauthorizedError";
+    }
+  }
+
+  export class ForbiddenError extends DomainError {
+    constructor(message = "Forbidden") {
+      super(message, "FORBIDDEN", 403);
+      this.name = "ForbiddenError";
     }
   }
 

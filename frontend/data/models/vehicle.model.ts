@@ -1,8 +1,9 @@
 import z from "zod";
 import { Paginated } from "./paginated.model";
-import { createVehicleSchema } from "@/lib/validator";
+import { createVehicleSchema, updateVehicleSchema } from "@/lib/validator";
 
 export type CreateVehicleInput = z.infer<typeof createVehicleSchema>;
+export type UpdateVehicleInput = z.infer<typeof updateVehicleSchema>;
 
 export interface VehicleResponse extends Paginated {
   data: Vehicle[];
@@ -28,7 +29,7 @@ export interface Vehicle {
   engine_displacement_cc: number;
   color: string;
   mileage: number;
-  daily_rate: string;
+  daily_rate: number;
   currency: string;
   vehicle_status: string;
   vehicle_availability: string;

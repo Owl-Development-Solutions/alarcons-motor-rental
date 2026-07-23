@@ -38,6 +38,10 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createVehicle, updateVehicle } from "@/data/actions/vehicle";
+import { useRouter } from "next/navigation";
+import { CarRentalErrors } from "@/data/errors/car-rental.errors";
+import { useState } from "react";
 
 const inputClasses =
   "border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500";
@@ -45,12 +49,12 @@ const inputClasses =
 const AdminAddVehicleForm = ({
   type,
   vehicle,
-  vehicleId,
 }: {
   type: "Create" | "Update";
-  vehicle?: any;
-  vehicleId?: number;
+  vehicle?: Vehicle;
 }) => {
+  const router = useRouter();
+
   const defaultVehicleInsurance: VehicleInsurance = {
     provider: "",
     expires_at: "",
@@ -60,19 +64,19 @@ const AdminAddVehicleForm = ({
   const defaultVehicleValues = {
     make: "",
     model: "",
-    year: new Date().getFullYear(),
+    year: 0,
     vehicle_type: "",
     plate_number: "",
     vin: "",
     category: "",
     transmission: "",
     fuel_type: "",
-    seats: "0",
-    doors: "0",
+    seats: 0,
+    doors: 0,
     engine_displacement_cc: 0,
     color: "",
-    mileage: "0",
-    daily_rate: "0",
+    mileage: 0,
+    daily_rate: 0,
     currency: "USD",
     vehicle_status: "",
     vehicle_availability: "",
@@ -95,14 +99,92 @@ const AdminAddVehicleForm = ({
   const onSubmit: SubmitHandler<z.infer<typeof createVehicleSchema>> = async (
     values,
   ) => {
-    console.log(values);
+    try {
+      if (type === "Create") {
+        const res = await createVehicle(values);
+        toast.success(res.message);
+        router.push("/admin/vehicles");
+        return;
+      }
+
+      if (type === "Update") {
+        if (!vehicle?.id) {
+          router.push("/admin/vehicles");
+          return;
+        }
+
+        const res = await updateVehicle({ ...values, id: vehicle.id });
+        toast.success(res.message);
+        router.push("/admin/vehicles");
+        return;
+      }
+    } catch (error) {
+      if (error instanceof CarRentalErrors.ValidationError) {
+        // map Laravel's field-level errors directly onto the form inputs
+        Object.entries(error.fields).forEach(([field, messages]) => {
+          form.setError(field as keyof z.infer<typeof createVehicleSchema>, {
+            message: messages[0],
+          });
+        });
+        toast.error(error.message, {
+          style: {
+            background: "#fef2f2", // red-50
+            color: "#991b1b", // red-800
+            border: "1px solid #fecaca", // red-200
+          },
+        });
+        return;
+      }
+
+      if (error instanceof CarRentalErrors.NotFoundError) {
+        toast.error(error.message, {
+          style: {
+            background: "#fef2f2", // red-50
+            color: "#991b1b", // red-800
+            border: "1px solid #fecaca", // red-200
+          },
+        });
+        router.push("/admin/vehicles");
+        return;
+      }
+
+      if (error instanceof CarRentalErrors.UnauthorizedError) {
+        toast.error("Session expired. Please log in again.", {
+          style: {
+            background: "#fef2f2", // red-50
+            color: "#991b1b", // red-800
+            border: "1px solid #fecaca", // red-200
+          },
+        });
+        router.push("/login");
+        return;
+      }
+
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong.",
+        {
+          style: {
+            background: "#fef2f2", // red-50
+            color: "#991b1b", // red-800
+            border: "1px solid #fecaca", // red-200
+          },
+        },
+      );
+    }
+  };
+
+  const onError = (error: any) => {
+    console.log(error);
   };
 
   const images = form.watch("images") as string[];
   const vehicleType = form.watch("vehicle_type");
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-6">
+    <form
+      onSubmit={form.handleSubmit(onSubmit, onError)}
+      className="p-6 space-y-6"
+    >
       <FieldGroup>
         <div className="flex flex-col md:flex-row gap-5">
           {/* IMAGES */}
@@ -144,7 +226,7 @@ const AdminAddVehicleForm = ({
                               toast.error("Failed to remove the image");
                             }
                           }}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center  transition-colors "
                           aria-label="Remove image"
                         >
                           <XIcon />
@@ -268,7 +350,7 @@ const AdminAddVehicleForm = ({
 
                 <Input
                   type="number"
-                  placeholder="1992"
+                  placeholder="2023"
                   {...field}
                   aria-invalid={fieldState.invalid}
                   className={`${inputClasses}`}
@@ -529,75 +611,71 @@ const AdminAddVehicleForm = ({
             )}
           />
 
-          {vehicleType === "car" && (
-            <>
-              <Controller
-                name="seats"
-                control={form.control}
-                render={({
-                  field,
-                  fieldState,
-                }: {
-                  field: ControllerRenderProps<
-                    z.infer<typeof createVehicleSchema>,
-                    "seats"
-                  >;
-                  fieldState: ControllerFieldState;
-                }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Number of seats</FieldLabel>
+          <Controller
+            name="seats"
+            control={form.control}
+            render={({
+              field,
+              fieldState,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof createVehicleSchema>,
+                "seats"
+              >;
+              fieldState: ControllerFieldState;
+            }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Number of seats</FieldLabel>
 
-                    <Input
-                      type="number"
-                      placeholder="4"
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      className={`${inputClasses}`}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError
-                        errors={[fieldState.error]}
-                        className="text-red-500!"
-                      />
-                    )}
-                  </Field>
+                <Input
+                  type="number"
+                  placeholder="4"
+                  {...field}
+                  aria-invalid={fieldState.invalid}
+                  className={`${inputClasses}`}
+                />
+                {fieldState.invalid && (
+                  <FieldError
+                    errors={[fieldState.error]}
+                    className="text-red-500!"
+                  />
                 )}
-              />
+              </Field>
+            )}
+          />
 
-              <Controller
-                name="doors"
-                control={form.control}
-                render={({
-                  field,
-                  fieldState,
-                }: {
-                  field: ControllerRenderProps<
-                    z.infer<typeof createVehicleSchema>,
-                    "doors"
-                  >;
-                  fieldState: ControllerFieldState;
-                }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Number of doors</FieldLabel>
+          <Controller
+            name="doors"
+            control={form.control}
+            render={({
+              field,
+              fieldState,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof createVehicleSchema>,
+                "doors"
+              >;
+              fieldState: ControllerFieldState;
+            }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Number of doors</FieldLabel>
 
-                    <Input
-                      type="number"
-                      placeholder="4"
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      className={`${inputClasses}`}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError
-                        errors={[fieldState.error]}
-                        className="text-red-500!"
-                      />
-                    )}
-                  </Field>
+                <Input
+                  type="number"
+                  placeholder="4"
+                  {...field}
+                  aria-invalid={fieldState.invalid}
+                  className={`${inputClasses}`}
+                />
+                {fieldState.invalid && (
+                  <FieldError
+                    errors={[fieldState.error]}
+                    className="text-red-500!"
+                  />
                 )}
-              />
-            </>
-          )}
+              </Field>
+            )}
+          />
 
           <Controller
             name="engine_displacement_cc"
@@ -633,7 +711,7 @@ const AdminAddVehicleForm = ({
           />
         </div>
 
-        <div className="mt-2 grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="mt-2 grid md:grid-cols-3 lg:grid-cols-5 gap-4">
           <Controller
             name="color"
             control={form.control}
@@ -791,11 +869,9 @@ const AdminAddVehicleForm = ({
               </Field>
             )}
           />
-        </div>
 
-        <div className="mt-2">
           <Controller
-            name="features"
+            name="daily_rate"
             control={form.control}
             render={({
               field,
@@ -803,21 +879,16 @@ const AdminAddVehicleForm = ({
             }: {
               field: ControllerRenderProps<
                 z.infer<typeof createVehicleSchema>,
-                "features"
+                "daily_rate"
               >;
               fieldState: ControllerFieldState;
             }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>
-                  Vehicle Features
-                  <span className="ml-1 text-xs font-normal text-muted-foreground">
-                    (Comma Separated)
-                  </span>
-                </FieldLabel>
+                <FieldLabel>Vehicle daily rate</FieldLabel>
 
                 <Input
-                  type="text"
-                  placeholder="air conditioning, gps, backup-camera"
+                  type="number"
+                  placeholder="1800"
                   {...field}
                   aria-invalid={fieldState.invalid}
                   className={`${inputClasses}`}
@@ -830,6 +901,57 @@ const AdminAddVehicleForm = ({
                 )}
               </Field>
             )}
+          />
+        </div>
+
+        <div className="mt-2">
+          <Controller
+            name="features"
+            control={form.control}
+            render={({ field, fieldState }) => {
+              const [text, setText] = useState(field.value?.join(", ") ?? "");
+
+              return (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>
+                    Vehicle Features
+                    <span className="ml-1 text-xs font-normal text-muted-foreground">
+                      (Comma Separated)
+                    </span>
+                  </FieldLabel>
+
+                  <Input
+                    value={text}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      setText(raw); // let the user type freely, commas included
+
+                      const features = raw
+                        .split(",")
+                        .map((item) => item.trim())
+                        .filter(Boolean);
+
+                      field.onChange(features);
+                    }}
+                    onBlur={() => {
+                      // clean up trailing commas/spaces once they're done typing
+                      setText(field.value?.join(", ") ?? "");
+                      field.onBlur();
+                    }}
+                    placeholder="Air Conditioning, GPS, Backup Camera"
+                    aria-invalid={fieldState.invalid}
+                    className={inputClasses}
+                  />
+
+                  {fieldState.invalid && (
+                    <FieldError
+                      errors={[fieldState.error]}
+                      className="text-red-500!"
+                    />
+                  )}
+                </Field>
+              );
+            }}
           />
         </div>
 

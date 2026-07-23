@@ -9,10 +9,13 @@ const VehicleAvailabilityBadge = ({
   status,
   className,
 }: {
-  status: VehicleAvailability;
+  status: string;
   className?: string;
 }) => {
-  const config = vehicleAvailabilityConfig[status];
+  const config =
+    vehicleAvailabilityConfig[status as VehicleAvailability] ??
+    vehicleAvailabilityConfig.unavailable;
+
   return (
     <Badge className={cn(config.className, className)}>{config.label}</Badge>
   );

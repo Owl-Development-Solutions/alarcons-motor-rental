@@ -40,7 +40,8 @@ class Vehicle extends Model
         'vehicle_availability',
         'features',
         'images',
-        'insurance'
+        'insurance',
+        'description'
     ];
 
 

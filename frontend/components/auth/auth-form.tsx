@@ -95,9 +95,11 @@ const AuthForm = ({
       onOpenChange(false);
 
       if (res.user?.role === "admin") {
-        router.push("/admin");
+        router.push("/admin/dashboard");
       }
     } catch (error: unknown) {
+      console.log(error);
+
       toast.error(
         error instanceof Error
           ? error.message

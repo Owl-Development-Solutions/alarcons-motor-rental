@@ -67,7 +67,7 @@ const VehicleCard = ({ vehicle, onBook }: VehicleCardProps) => {
     >
       <Card className="overflow-hidden p-0 gap-0 border-neutral-200">
         {/* Image */}
-        <div className="relative aspect-4/3 bg-neutral-100">
+        <div className="relative h-56 w-full bg-neutral-100">
           {images?.[0] ? (
             <img
               src={images[0]}

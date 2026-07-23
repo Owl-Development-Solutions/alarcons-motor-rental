@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -13,8 +15,16 @@ import Image from "next/image";
 import { Badge } from "../ui/badge";
 import VehicleAvailabilityBadge from "../vehicle-availability-badge";
 import VehicleStatusBadge from "../vehicle-status-badge";
+import AdminAddVehicleForm from "./admin-vehicle-form";
+import { useRouter } from "next/navigation";
 
 const AdminTableVehicle = ({ vehicles }: { vehicles: Vehicle[] }) => {
+  const router = useRouter();
+
+  const handleEditVehicle = (vehicle: Vehicle) => {
+    router.push(`/admin/vehicles/${vehicle.id}/edit`);
+  };
+
   return (
     <>
       <Table>
@@ -69,7 +79,7 @@ const AdminTableVehicle = ({ vehicles }: { vehicles: Vehicle[] }) => {
                   alt={`${vehicle.make} ${vehicle.model}`}
                   width={100}
                   height={64}
-                  className="rounded-lg object-cover "
+                  className="h-[64] rounded-lg object-cover"
                 />
               </TableCell>
 
@@ -104,7 +114,10 @@ const AdminTableVehicle = ({ vehicles }: { vehicles: Vehicle[] }) => {
                   <button className="p-1 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
                     <Eye className="w-4 h-4" />
                   </button>
-                  <button className="p-1 text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400">
+                  <button
+                    className="p-1 text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400"
+                    onClick={() => handleEditVehicle(vehicle)}
+                  >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400">

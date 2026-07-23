@@ -39,7 +39,7 @@ export default async function RootLayout({
           <NextTopLoader color="orange" />
           {children}
         </UserProvider>
-        <Toaster />
+        <Toaster richColors />
       </body>
     </html>
   );

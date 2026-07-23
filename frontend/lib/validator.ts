@@ -74,7 +74,7 @@ export const VehicleInsuranceSchema = z.object({
 export const createVehicleSchema = z.object({
   make: z.string().min(1, "Make is required"),
   model: z.string().min(1, "Model is required"),
-  year: z
+  year: z.coerce
     .number()
     .int("Year must be a whole number")
     .min(1900, "Year must be 1900 or later")
@@ -90,24 +90,20 @@ export const createVehicleSchema = z.object({
     .int("Seats must be a whole number")
     .positive("Seats must be greater than 0")
     .optional(),
-  doors: z.coerce
-    .number()
-    .int("Doors must be a whole number")
-    .positive("Doors must be greater than 0")
-    .optional(),
+  doors: z.coerce.number().optional(),
   engine_displacement_cc: z.coerce.number().optional(),
   color: z.string().min(1, "Color is required"),
   mileage: z.coerce
     .number()
     .nonnegative("Mileage cannot be negative")
     .optional(),
-  daily_rate: z.coerce.string().min(1, "Daily rate is required"),
+  daily_rate: z.coerce.number().min(1, "Daily rate is required"),
   currency: z.string().optional(),
   vehicle_status: z.string().min(1, "Vehicle status is required"),
   vehicle_availability: z.string().min(1, "Vehicle availability is required"),
   features: z.array(z.string()).optional(),
-  images: z.array(z.string().url("Each image must be a valid URL")).optional(),
-  insurance: VehicleInsuranceSchema.optional(),
+  images: z.array(z.url("Each image must be a valid URL")).optional(),
+  // insurance: VehicleInsuranceSchema.optional(),
   description: z.string().optional(),
 });
 
