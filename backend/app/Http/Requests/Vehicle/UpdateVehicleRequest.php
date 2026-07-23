@@ -28,7 +28,7 @@ class UpdateVehicleRequest extends FormRequest
             'transmission' => ['sometimes', 'string', 'in:automatic,manual'],
             'fuel_type' => ['sometimes', 'string', 'max:255'],
             'seats' => ['sometimes', 'integer', 'min:1', 'max:20'],
-            'doors' => ['sometimes', 'integer', 'min:1', 'max:6'],
+            'doors' => ['sometimes', 'integer', 'min:0', 'max:6'],
             'engine_displacement_cc' => ['nullable', 'integer', 'min:1', 'max:10000'],
             'color' => ['sometimes', 'string', 'max:255'],
             'mileage' => ['sometimes', 'integer', 'min:0'],
@@ -36,6 +36,8 @@ class UpdateVehicleRequest extends FormRequest
             'currency' => ['sometimes', 'string', 'size:3'],
             'vehicle_status' => ['sometimes', 'string', 'in:active,inactive,retired'],
             'vehicle_availability' => ['nullable', 'string', 'in:available,reserved,maintenance,unavailable,rented'],
+
+            'description' => ['required', 'string', 'max:255'],
 
             'features' => ['sometimes', 'array'],
             'features.*' => ['string'],
