@@ -5,12 +5,15 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "./admin-sidebar";
+import { requireRole } from "@/guard/auth-guard";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await requireRole("admin");
+
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -1,11 +1,27 @@
 import AdminTableVehicle from "@/components/admin/admin-table-vehicle";
+import DataPagination from "@/components/shared/data-pagination";
 import { Button } from "@/components/ui/button";
+import VehicleFilter from "@/components/vehicles/vehicle-filter";
 import { getVehicles } from "@/data/actions/vehicle";
-import { Edit, Eye, Plus, Search, Trash2 } from "lucide-react";
+import { VehicleFilters } from "@/data/models/vehicle.filter";
+import { Edit, Eye, Filter, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 
-const AdminVehiclePage = async () => {
-  const { data } = await getVehicles();
+interface VehiclePageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+const AdminVehiclePage = async ({ searchParams }: VehiclePageProps) => {
+  const params = await searchParams;
+
+  const filters: VehicleFilters = {
+    search: typeof params.search === "string" ? params.search : undefined,
+    vehicle_type:
+      typeof params.vehicle_type === "string" ? params.vehicle_type : undefined,
+    page: typeof params.page === "string" ? Number(params.page) : undefined,
+  };
+
+  const res = await getVehicles(filters);
 
   return (
     <div className="space-y-6">
@@ -19,10 +35,6 @@ const AdminVehiclePage = async () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {/* <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
-            <Filter className="w-4 h-4" />
-            Filter
-          </button> */}
           <Link href="/admin/vehicles/add">
             <Button className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-orange-500 to-orange-600 text-white rounded-lg text-sm font-medium hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg shadow-orange-500/30">
               <Plus className="w-4 h-4" />
@@ -38,19 +50,22 @@ const AdminVehiclePage = async () => {
               All Vehicles
             </h3>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search vehicles..."
-                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
+              <VehicleFilter />
             </div>
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <AdminTableVehicle vehicles={data} />
+          <AdminTableVehicle vehicles={res.vehicles.data} />
         </div>
+        {res.vehicles.data.length > 1 && (
+          <div className="border-t border-gray-100 p-4 dark:border-slate-700">
+            <DataPagination
+              currentPage={res.vehicles.current_page}
+              lastPage={res.vehicles.last_page}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

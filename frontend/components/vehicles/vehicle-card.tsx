@@ -13,13 +13,7 @@ import {
   TypeIcon,
   Users,
 } from "lucide-react";
-import {
-  bookLabel,
-  currency,
-  STATUS_LABEL,
-  STATUS_STYLE,
-  TYPE_ICON,
-} from "@/lib/helpers";
+import { bookLabel, TYPE_ICON } from "@/lib/helpers";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import VehicleStatusBadge from "../vehicle-status-badge";
@@ -172,7 +166,9 @@ const VehicleCard = ({ vehicle, onBook }: VehicleCardProps) => {
           <Button
             disabled={!isAvailable}
             className={`${
-              isAvailable ? "bg-linear-to-r from-orange-500 to-orange-600" : ""
+              isAvailable
+                ? "bg-linear-to-r from-orange-500 to-orange-600 text-white"
+                : "text-white"
             } cursor-pointer`}
           >
             {isAvailable ? bookLabel(vehicle_type) : "Unavailable"}

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\BookingException;
+use App\Models\Vehicle;
 use App\Services\VehicleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

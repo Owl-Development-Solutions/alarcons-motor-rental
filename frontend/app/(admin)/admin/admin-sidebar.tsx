@@ -106,7 +106,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="bg-white dark:bg-[#0F172A]">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -168,10 +168,25 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
-        <div className="flex items-center gap-3 px-2 py-2">
-          <div className="w-9 h-9 shrink-0 bg-linear-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
-            <User className="w-5 h-5 text-white" />
+      <SidebarFooter className="bg-white dark:bg-[#0F172A]">
+        <div
+          className={cn(
+            "flex items-center gap-3 px-2 py-2 transition-all",
+            "group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0",
+          )}
+        >
+          <div
+            className={cn(
+              "w-9 h-9 shrink-0 bg-linear-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center transition-all",
+              "group-data-[collapsible=icon]:h-7 group-data-[collapsible=icon]:w-7",
+            )}
+          >
+            <User
+              className={cn(
+                "w-5 h-5 text-white transition-all",
+                "group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4",
+              )}
+            />
           </div>
           <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
             <p className="text-sm font-medium text-gray-900 dark:text-white truncate">

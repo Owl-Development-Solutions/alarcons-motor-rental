@@ -41,7 +41,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createVehicle, updateVehicle } from "@/data/actions/vehicle";
 import { useRouter } from "next/navigation";
 import { CarRentalErrors } from "@/data/errors/car-rental.errors";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 const inputClasses =
   "border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500";
@@ -55,9 +55,12 @@ const AdminAddVehicleForm = ({
 }) => {
   const router = useRouter();
 
+  const [isPending, startTransition] = useTransition();
+
   const defaultVehicleInsurance: VehicleInsurance = {
     provider: "",
-    expires_at: "",
+    // @TODO CHANGE THIS THE ANY!,
+    expires_at: "" as any,
     policy_number: "",
   };
 
@@ -99,78 +102,80 @@ const AdminAddVehicleForm = ({
   const onSubmit: SubmitHandler<z.infer<typeof createVehicleSchema>> = async (
     values,
   ) => {
-    try {
-      if (type === "Create") {
-        const res = await createVehicle(values);
-        toast.success(res.message);
-        router.push("/admin/vehicles");
-        return;
-      }
-
-      if (type === "Update") {
-        if (!vehicle?.id) {
+    startTransition(async () => {
+      try {
+        if (type === "Create") {
+          const res = await createVehicle(values);
+          toast.success(res.message);
           router.push("/admin/vehicles");
           return;
         }
 
-        const res = await updateVehicle({ ...values, id: vehicle.id });
-        toast.success(res.message);
-        router.push("/admin/vehicles");
-        return;
-      }
-    } catch (error) {
-      if (error instanceof CarRentalErrors.ValidationError) {
-        // map Laravel's field-level errors directly onto the form inputs
-        Object.entries(error.fields).forEach(([field, messages]) => {
-          form.setError(field as keyof z.infer<typeof createVehicleSchema>, {
-            message: messages[0],
+        if (type === "Update") {
+          if (!vehicle?.id) {
+            router.push("/admin/vehicles");
+            return;
+          }
+
+          const res = await updateVehicle({ ...values, id: vehicle.id });
+          toast.success(res.message);
+          router.push("/admin/vehicles");
+          return;
+        }
+      } catch (error) {
+        if (error instanceof CarRentalErrors.ValidationError) {
+          // map Laravel's field-level errors directly onto the form inputs
+          Object.entries(error.fields).forEach(([field, messages]) => {
+            form.setError(field as keyof z.infer<typeof createVehicleSchema>, {
+              message: messages[0],
+            });
           });
-        });
-        toast.error(error.message, {
-          style: {
-            background: "#fef2f2", // red-50
-            color: "#991b1b", // red-800
-            border: "1px solid #fecaca", // red-200
-          },
-        });
-        return;
-      }
+          toast.error(error.message, {
+            style: {
+              background: "#fef2f2", // red-50
+              color: "#991b1b", // red-800
+              border: "1px solid #fecaca", // red-200
+            },
+          });
+          return;
+        }
 
-      if (error instanceof CarRentalErrors.NotFoundError) {
-        toast.error(error.message, {
-          style: {
-            background: "#fef2f2", // red-50
-            color: "#991b1b", // red-800
-            border: "1px solid #fecaca", // red-200
-          },
-        });
-        router.push("/admin/vehicles");
-        return;
-      }
+        if (error instanceof CarRentalErrors.NotFoundError) {
+          toast.error(error.message, {
+            style: {
+              background: "#fef2f2", // red-50
+              color: "#991b1b", // red-800
+              border: "1px solid #fecaca", // red-200
+            },
+          });
+          router.push("/admin/vehicles");
+          return;
+        }
 
-      if (error instanceof CarRentalErrors.UnauthorizedError) {
-        toast.error("Session expired. Please log in again.", {
-          style: {
-            background: "#fef2f2", // red-50
-            color: "#991b1b", // red-800
-            border: "1px solid #fecaca", // red-200
-          },
-        });
-        router.push("/login");
-        return;
-      }
+        if (error instanceof CarRentalErrors.UnauthorizedError) {
+          toast.error("Session expired. Please log in again.", {
+            style: {
+              background: "#fef2f2", // red-50
+              color: "#991b1b", // red-800
+              border: "1px solid #fecaca", // red-200
+            },
+          });
+          router.push("/login");
+          return;
+        }
 
-      toast.error(
-        error instanceof Error ? error.message : "Something went wrong.",
-        {
-          style: {
-            background: "#fef2f2", // red-50
-            color: "#991b1b", // red-800
-            border: "1px solid #fecaca", // red-200
+        toast.error(
+          error instanceof Error ? error.message : "Something went wrong.",
+          {
+            style: {
+              background: "#fef2f2", // red-50
+              color: "#991b1b", // red-800
+              border: "1px solid #fecaca", // red-200
+            },
           },
-        },
-      );
-    }
+        );
+      }
+    });
   };
 
   const onError = (error: any) => {
@@ -994,10 +999,10 @@ const AdminAddVehicleForm = ({
         <div>
           <Button
             type="submit"
-            disabled={form.formState.isSubmitting}
+            disabled={isPending}
             className="h-12 px-8 py-3 bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
           >
-            {form.formState.isSubmitting ? "Submitting" : `${type} Vehicle`}
+            {isPending ? "Submitting" : `${type} Vehicle`}
           </Button>
         </div>
       </FieldGroup>

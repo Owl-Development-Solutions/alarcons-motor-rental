@@ -83,14 +83,14 @@ const UserButton = ({ user }: { user: UserModel }) => {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger>
-              <span className="flex h-8 w-8 mr-2 items-center justify-center rounded-full dark:bg-slate-600 text-white text-xs font-medium">
+              <span className="flex h-8 w-8 mr-2 items-center justify-center rounded-full bg-orange-300 text-orange-800 dark:bg-slate-600 dark:text-white text-xs font-medium">
                 {`${firstInitial} ${secondIinitial}`}
               </span>
               <span className="text-sm font-medium dark:text-gray-400">
                 {user.first_name} {user.last_name}
               </span>
             </NavigationMenuTrigger>
-            <NavigationMenuContent className="bg-slate-900 rounded-md">
+            <NavigationMenuContent className="dark:bg-slate-900 bg-white rounded-md">
               <ul className="w-40">
                 <ListItem
                   href="/profile"
@@ -102,12 +102,10 @@ const UserButton = ({ user }: { user: UserModel }) => {
                   type="button"
                   onClick={handleSignOut}
                   disabled={isSigningOut}
-                  className="bg-transparent w-full hover:bg-red-900"
+                  className="bg-transparent w-full flex justify-start  hover:bg-red-200 hover:text-red-700"
                 >
-                  <div className="flex gap-2 text-center align-center w-full">
-                    <LogOut className="text-red-400" />
-                    <span>{isSigningOut ? "Signing out..." : "Sign Out"}</span>
-                  </div>
+                  <LogOut className="text-rose-700" />
+                  <span>{isSigningOut ? "Signing out..." : "Sign Out"}</span>
                 </Button>
               </ul>
             </NavigationMenuContent>
