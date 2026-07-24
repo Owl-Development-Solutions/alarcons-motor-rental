@@ -31,7 +31,7 @@ class UploadThingService
             $response = Http::withHeaders([
                 'X-Uploadthing-Api-Key' => config('services.uploadthing.token'),
                 'Content-Type' => 'application/json',
-            ])->post('https://api.uploadthing.com/v6/deleteFiles', [
+            ])->delete('https://api.uploadthing.com/v6/deleteFiles', [
                 'fileKeys' => [$fileKey]
             ]);
 

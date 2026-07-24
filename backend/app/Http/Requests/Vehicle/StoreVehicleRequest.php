@@ -34,7 +34,7 @@ class StoreVehicleRequest extends FormRequest
             'vehicle_status' => ['nullable', 'string', 'in:active,inactive,retired'],
             'vehicle_availability' => ['nullable', 'string', 'in:available,reserved,maintenance,unavailable,rented'],
             
-            'description' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:5000'],
 
             'features' => ['nullable', 'array'],
             'features.*' => ['string'],

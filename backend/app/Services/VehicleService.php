@@ -15,39 +15,68 @@ class VehicleService
     {
     }
 
-    /**
+ /**
      * Public browsing/search. Supports:
      *  - category, transmission, fuel_type (exact match)
+     *  - vehicle_type: 'car' | 'motorcycle' (bucketed, see below)
+     *  - search: free-text match against make/model/vehicle_type
      *  - min_rate / max_rate
      *  - pickup_datetime + dropoff_datetime -> excludes vehicles that already
      *    have a blocking booking (pending_payment/payment_submitted/
      *    confirmed/active) overlapping that window.
      */
-    public function listVehicles(array $filters): LengthAwarePaginator
+    public function listVehicles(array $filters): array
     {
-        $query  = Vehicle::query();
-
-        if(!empty($filters['status'])) {
+        $query = Vehicle::query();
+ 
+        if (!empty($filters['status'])) {
             $query->where('vehicle_availability', $filters['status']);
         } else {
-            $query->whereNotIn('vehicle_availability', [Vehicle::STATUS_MAINTENANCE, Vehicle::STATUS_UNAVAILABLE]);
+            $query->whereNotIn('vehicle_availability', [
+                Vehicle::STATUS_MAINTENANCE,
+                Vehicle::STATUS_UNAVAILABLE,
+            ]);
         }
-
+ 
         foreach (['category', 'transmission', 'fuel_type'] as $exactField) {
             if (!empty($filters[$exactField])) {
                 $query->where($exactField, $filters[$exactField]);
             }
         }
-
+ 
+        if (!empty($filters['vehicle_type'])) {
+            $carTypes = ['sedan', 'suv', 'hatchback', 'pickup', 'coupe', 'van', 'minivan', 'car'];
+            $motorcycleTypes = ['motorcycle', 'scooter', 'cruiser', 'sportbike'];
+ 
+            if ($filters['vehicle_type'] === 'car') {
+                $query->whereIn('vehicle_type', $carTypes);
+            } elseif ($filters['vehicle_type'] === 'motorcycle') {
+                $query->whereIn('vehicle_type', $motorcycleTypes);
+            } else {
+                // Fallback: exact match, in case you pass a specific body style directly
+                $query->where('vehicle_type', $filters['vehicle_type']);
+            }
+        }
+ 
+        // Free-text search across make, model, vehicle_type
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('make', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%")
+                  ->orWhere('vehicle_type', 'like', "%{$search}%");
+            });
+        }
+ 
         if (!empty($filters['min_rate'])) {
             $query->where('daily_rate', '>=', $filters['min_rate']);
         }
-
+ 
         if (!empty($filters['max_rate'])) {
             $query->where('daily_rate', '<=', $filters['max_rate']);
         }
-
-        if (!empty($filters['pickup_datetime']) && ! empty($filters['dropoff_datetime'])) {
+ 
+        if (!empty($filters['pickup_datetime']) && !empty($filters['dropoff_datetime'])) {
             $pickup = Carbon::parse($filters['pickup_datetime']);
             $dropoff = Carbon::parse($filters['dropoff_datetime']);
  
@@ -58,8 +87,23 @@ class VehicleService
  
             $query->whereNotIn('id', $bookedVehicleIds);
         }
-
-        return $query->latest()->paginate($filters['per_page'] ?? 15);
+ 
+        $vehicles = $query->latest()->paginate($filters['per_page'] ?? 15);
+ 
+        // IMPORTANT: without this, next_page_url only contains `?page=2`
+        // and drops search/vehicle_type/etc, breaking infinite scroll filters.
+        $vehicles->appends($filters);
+ 
+        return [
+            'vehicles' => $vehicles,
+            'counts' => [
+                'all' => Vehicle::count(),
+                'available' => Vehicle::where('vehicle_availability', Vehicle::STATUS_AVAILABLE)->count(),
+                'booked' => Vehicle::where('vehicle_availability', Vehicle::STATUS_RESERVED)->count(),
+                'maintenance' => Vehicle::where('vehicle_availability', Vehicle::STATUS_MAINTENANCE)->count(),
+                'unavailable' => Vehicle::where('vehicle_availability', Vehicle::STATUS_UNAVAILABLE)->count(),
+            ],
+        ];
     }
 
     public function getVehicle(int $vehicleId): Vehicle

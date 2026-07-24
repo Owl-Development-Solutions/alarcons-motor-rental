@@ -1,6 +1,6 @@
 import AdminAddVehicleForm from "@/components/admin/admin-vehicle-form";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftFromLine, X } from "lucide-react";
+import { ArrowLeft, ArrowLeftFromLine, X } from "lucide-react";
 import Link from "next/link";
 
 export default function AddVehiclePage() {
@@ -19,7 +19,7 @@ export default function AddVehiclePage() {
         <div className="flex items-center gap-3">
           <Link href="/admin/vehicles">
             <Button variant="outline" size="sm" className="cursor-pointer">
-              <ArrowLeftFromLine className="mr-2 h-4 w-4" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Vehicles
             </Button>
           </Link>

@@ -17,12 +17,21 @@ import VehicleAvailabilityBadge from "../vehicle-availability-badge";
 import VehicleStatusBadge from "../vehicle-status-badge";
 import AdminAddVehicleForm from "./admin-vehicle-form";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import VehicleDetailModal from "./admin-vehicle-modal";
+import ConfirmDeleteDialog from "../shared/confirm-delete-dialog";
+import { deleteVehicle } from "@/data/actions/vehicle";
 
 const AdminTableVehicle = ({ vehicles }: { vehicles: Vehicle[] }) => {
   const router = useRouter();
+  const [viewingVehicle, setViewingVehicle] = useState<Vehicle | null>(null);
 
   const handleEditVehicle = (vehicle: Vehicle) => {
     router.push(`/admin/vehicles/${vehicle.id}/edit`);
+  };
+
+  const handleViewVehicle = (vehicle: Vehicle) => {
+    setViewingVehicle(vehicle);
   };
 
   return (
@@ -111,7 +120,10 @@ const AdminTableVehicle = ({ vehicles }: { vehicles: Vehicle[] }) => {
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <button className="p-1 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                  <button
+                    className="p-1 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                    onClick={() => handleViewVehicle(vehicle)}
+                  >
                     <Eye className="w-4 h-4" />
                   </button>
                   <button
@@ -120,15 +132,32 @@ const AdminTableVehicle = ({ vehicles }: { vehicles: Vehicle[] }) => {
                   >
                     <Edit className="w-4 h-4" />
                   </button>
-                  <button className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400">
+                  {/* <button className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400">
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </button> */}
+                  <ConfirmDeleteDialog
+                    itemLabel="vehicle"
+                    itemName={`${vehicle.make} ${vehicle.model} (${vehicle.plate_number})`}
+                    onConfirm={() => deleteVehicle(vehicle)}
+                    onDeleted={() => router.refresh()}
+                  >
+                    <button className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </ConfirmDeleteDialog>
                 </div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
+      {/* MODAL */}
+      <VehicleDetailModal
+        vehicle={viewingVehicle}
+        open={!!viewingVehicle}
+        onOpenChange={(open) => !open && setViewingVehicle(null)}
+      />
     </>
   );
 };

@@ -154,11 +154,11 @@ const AuthForm = ({
         <></>
       )}
 
-      <DialogContent className="sm:max-w-120 max-h-screen  bg-[#111729] overflow-x-auto">
+      <DialogContent className="sm:max-w-120 max-h-screen bg-white  dark:bg-[#111729] overflow-x-auto">
         {mode === "Login" ? (
           <React.Fragment key={mode}>
             <DialogHeader className="text-center">
-              <DialogTitle className="text-center text-white">
+              <DialogTitle className="text-center dark:text-white">
                 Welcome back
               </DialogTitle>
               <DialogDescription className={cn(labelClasses, "text-center")}>

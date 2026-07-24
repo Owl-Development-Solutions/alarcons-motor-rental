@@ -130,21 +130,12 @@ const Navbar = () => {
                 <ul className="flex flex-col gap-4">
                   {navLinks.map((link) => (
                     <li key={link.href}>
-                      {link.href.startsWith("#") ? (
-                        <Button
-                          onClick={() => scrollTo(link.href)}
-                          className=" cursor-pointer text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
-                        >
-                          {link.label}
-                        </Button>
-                      ) : (
-                        <Link
-                          href={link.href}
-                          className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
-                        >
-                          {link.label}
-                        </Link>
-                      )}
+                      <Link
+                        href={link.href}
+                        className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
+                      >
+                        {link.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>

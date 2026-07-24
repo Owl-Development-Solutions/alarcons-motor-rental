@@ -37,12 +37,15 @@ class UpdateVehicleRequest extends FormRequest
             'vehicle_status' => ['sometimes', 'string', 'in:active,inactive,retired'],
             'vehicle_availability' => ['nullable', 'string', 'in:available,reserved,maintenance,unavailable,rented'],
 
-            'description' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:5000'],
 
             'features' => ['sometimes', 'array'],
             'features.*' => ['string'],
 
             'insurance' => ['sometimes', 'array'],
+
+            'images' => ['nullable', 'array', 'max:10'],
+            'images.*' => ['url', 'max:2048'],
         ];
     }
 }
