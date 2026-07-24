@@ -18,6 +18,7 @@ import { toastStyles } from "@/lib/toast.style";
 import { cn } from "@/lib/utils";
 import { bookingFormSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -38,6 +39,7 @@ const BookingForm = ({
   vehicle: Vehicle;
   country: Country[];
 }) => {
+  const router = useRouter();
   const bookingForm = useForm<z.infer<typeof bookingFormSchema>>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
@@ -72,6 +74,8 @@ const BookingForm = ({
         });
       }
     } catch (error) {
+      console.log(error instanceof Error ? error.message : "");
+
       toast.error(
         error instanceof Error ? error.message : "Something went wrong",
         { position: "bottom-right", style: toastStyles.error },
