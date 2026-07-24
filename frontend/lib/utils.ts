@@ -91,3 +91,101 @@ export function getPageRange(
 
   return result;
 }
+
+// Generic helper: turns any "config object" shaped like
+// { key: { label: string } } into [{ label, value: key }, ...]
+export function toOptions<T extends Record<string, { label: string }>>(
+  config: T,
+): { label: string; value: keyof T }[] {
+  return (Object.entries(config) as [keyof T, { label: string }][]).map(
+    ([value, { label }]) => ({ label, value }),
+  );
+}
+
+export const vehicleAvailabilityConfig = {
+  available: {
+    label: "Available",
+    className:
+      "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-900",
+  },
+  rented: {
+    label: "Rented",
+    className:
+      "bg-orange-100 text-orange-800 hover:bg-orange-100 dark:bg-orange-900 dark:text-orange-300 dark:hover:bg-orange-900",
+  },
+  reserved: {
+    label: "Reserved",
+    className:
+      "bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-900",
+  },
+  maintenance: {
+    label: "Maintenance",
+    className:
+      "bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900 dark:text-amber-300 dark:hover:bg-amber-900",
+  },
+  unavailable: {
+    label: "Unavailable",
+    className:
+      "bg-red-100 text-red-800 hover:bg-red-100 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-900",
+  },
+} as const;
+
+export type VehicleAvailability = keyof typeof vehicleAvailabilityConfig;
+
+export const vehicleStatusConfig = {
+  active: {
+    label: "Active",
+    className:
+      "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-900",
+  },
+  inactive: {
+    label: "Inactive",
+    className:
+      "bg-gray-100 text-gray-800 hover:bg-gray-100 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-700",
+  },
+  retired: {
+    label: "Retired",
+    className:
+      "bg-red-100 text-red-800 hover:bg-red-100 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-900",
+  },
+} as const;
+
+export type VehicleStatus = keyof typeof vehicleStatusConfig;
+
+export const carCategoryConfig = {
+  sedan: { label: "Sedan" },
+  suv: { label: "SUV" },
+  hatchback: { label: "Hatchback" },
+  pickup: { label: "Pickup" },
+  van: { label: "Van" },
+} as const;
+
+export const motorcycleCategoryConfig = {
+  scooter: { label: "Scooter" },
+  underbone: { label: "Underbone" },
+  sport: { label: "Sport" },
+  cruiser: { label: "Cruiser" },
+  adventure: { label: "Adventure" },
+} as const;
+
+export type CarCategory = keyof typeof carCategoryConfig;
+export type MotorcycleCategory = keyof typeof motorcycleCategoryConfig;
+export type VehicleCategory = CarCategory | MotorcycleCategory;
+
+export const vehicleTypeConfig = {
+  car: {
+    label: "Car",
+  },
+  motorcycle: {
+    label: "Motorcycle",
+  },
+} as const;
+
+export type VehicleType = keyof typeof vehicleTypeConfig;
+
+export const carCategoryOptions = toOptions(carCategoryConfig);
+export const motorcycleCategoryOptions = toOptions(motorcycleCategoryConfig);
+export const vehicleCategoryOptions = [
+  ...carCategoryOptions,
+  ...motorcycleCategoryOptions,
+];

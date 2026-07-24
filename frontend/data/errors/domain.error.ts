@@ -23,8 +23,11 @@ export function toDomainError(err: unknown): CarRentalErrors.DomainError {
           data?.message ?? "Unauthorized",
         );
 
+      case 403:
+        return new CarRentalErrors.ForbiddenError(data?.message ?? "Forbidden");
+
       case 404:
-        return new CarRentalErrors.NotFoundError(data?.resource ?? "Resource");
+        return new CarRentalErrors.NotFoundError(data?.message);
 
       case 409:
         return new CarRentalErrors.BookingError(

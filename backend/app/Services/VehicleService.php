@@ -28,9 +28,9 @@ class VehicleService
         $query  = Vehicle::query();
 
         if(!empty($filters['status'])) {
-            $query->where('status', $filters['status']);
+            $query->where('vehicle_availability', $filters['status']);
         } else {
-            $query->whereNotIn('status', [Vehicle::STATUS_MAINTENANCE, Vehicle::STATUS_UNAVAILABLE]);
+            $query->whereNotIn('vehicle_availability', [Vehicle::STATUS_MAINTENANCE, Vehicle::STATUS_UNAVAILABLE]);
         }
 
         foreach (['category', 'transmission', 'fuel_type'] as $exactField) {
@@ -79,8 +79,9 @@ class VehicleService
     public function createVehicle(array $data, array $imageUrls = []): Vehicle
     {
         $data['images'] = array_values(array_unique($imageUrls));
-        $data['status'] = $data['status'] ?? Vehicle::STATUS_AVAILABLE;
- 
+        $data['vehicle_status'] = $data['vehicle_status'] ?? Vehicle::VEHICLE_STATUS_ACTIVE;
+        $data['vehicle_availability'] = $data['vehicle_availability'] ?? Vehicle::STATUS_AVAILABLE;
+
         return Vehicle::create($data);
     }
     

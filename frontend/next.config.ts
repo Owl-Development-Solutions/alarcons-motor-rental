@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: "jaqghlcxfm.ufs.sh",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+        port: "",
+      },
     ],
   },
 };

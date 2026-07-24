@@ -18,25 +18,15 @@ import Stepper from "./stepper";
 import VehicleImageGallery from "@/components/vehicles/vehicle-image-gallery";
 import VehicleSpec from "@/components/vehicles/vehicle-spec";
 import { Badge } from "@/components/ui/badge";
-import {
-  STATUS_BANNER_CLASSES,
-  STATUS_MESSAGES,
-  toKnownStatus,
-} from "@/lib/vehicle.status";
+import VehicleStatusBadge from "@/components/vehicle-status-badge";
+import { toKnownAvailability, toKnownStatus } from "@/lib/vehicle.status";
+import VehicleAvailabilityBadge from "@/components/vehicle-availability-badge";
+import { formatCurrency } from "@/lib/utils";
 
 const STEPS = [
   { id: 1, label: "Vehicle details" },
   { id: 2, label: "Booking form" },
 ];
-
-const statusStyles: Record<string, string> = {
-  available:
-    "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400 ring-green-600/20",
-  booked:
-    "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 ring-amber-600/20",
-  maintenance:
-    "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 ring-red-600/20",
-};
 
 const VehicleDetailStepper = ({
   vehicle,
@@ -47,15 +37,16 @@ const VehicleDetailStepper = ({
 }) => {
   const [step, setStep] = useState(1);
 
-  const statusClass =
-    statusStyles[vehicle.status] ??
-    "bg-gray-50 text-gray-700 dark:bg-slate-700 dark:text-slate-300 ring-gray-600/20";
-
   const goNext = () => setStep((s) => Math.min(s + 1, STEPS.length));
   const goBack = () => setStep((s) => Math.max(s - 1, 1));
 
-  const status = toKnownStatus(vehicle.status);
-  const isBookable = status === "available";
+  const availability = toKnownAvailability(vehicle.vehicle_availability);
+  const status = toKnownStatus(vehicle.vehicle_status);
+
+  const isBookable = availability === "available" && status === "active";
+  const shouldShowAvailabilityBadge = status === "active" && !isBookable;
+
+  console.log(isBookable);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0F172A] px-4 py-8 sm:px-6 lg:px-8">
@@ -82,11 +73,7 @@ const VehicleDetailStepper = ({
                 </h1>
               </div>
 
-              <Badge
-                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium capitalize ring-1 ring-inset ${statusClass}`}
-              >
-                {vehicle.status}
-              </Badge>
+              <VehicleStatusBadge status={vehicle.vehicle_status} />
             </div>
 
             {/* BODY */}
@@ -177,7 +164,7 @@ const VehicleDetailStepper = ({
                 <div className="sticky top-23 rounded-2xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5">
                   <div className="flex items-baseline gap-1">
                     <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                      ₱{vehicle.daily_rate.toLocaleString()}
+                      {formatCurrency(vehicle.daily_rate)}
                     </span>
                     <span className="text-sm text-gray-500 dark:text-slate-400">
                       / day
@@ -187,12 +174,10 @@ const VehicleDetailStepper = ({
                     Continue to request this vehicle.
                   </p>
 
-                  {!isBookable && (
-                    <div
-                      className={`mb-3 mt-4 rounded-lg px-4 py-2.5 text-sm font-medium ${STATUS_BANNER_CLASSES[status]}`}
-                    >
-                      {STATUS_MESSAGES[status]}
-                    </div>
+                  {shouldShowAvailabilityBadge && (
+                    <VehicleAvailabilityBadge
+                      status={vehicle.vehicle_availability}
+                    />
                   )}
                   <Button
                     onClick={goNext}

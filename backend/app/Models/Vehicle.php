@@ -13,7 +13,11 @@ class Vehicle extends Model
     public const STATUS_RESERVED = 'reserved';
     public const STATUS_MAINTENANCE = 'maintenance';
     public const STATUS_UNAVAILABLE = 'unavailable';
+    public const STATUS_RENTED = 'rented';
 
+    public const VEHICLE_STATUS_ACTIVE = 'active';
+    public const VEHICLE_STATUS_INACTIVE = 'inactive';
+ 
 
     protected $fillable = [
         'make',
@@ -32,10 +36,12 @@ class Vehicle extends Model
         'mileage',
         'daily_rate',
         'currency',
-        'status',
+        'vehicle_status',
+        'vehicle_availability',
         'features',
         'images',
-        'insurance'
+        'insurance',
+        'description'
     ];
 
 
@@ -68,5 +74,10 @@ class Vehicle extends Model
     public function markAvailable(): void
     {
         $this->update(['status' => self::STATUS_AVAILABLE]);
+    }
+
+    public function markAsRented(): void
+    {
+        $this->update(['status' => self::STATUS_RENTED]);
     }
 }

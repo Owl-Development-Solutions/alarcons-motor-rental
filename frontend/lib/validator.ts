@@ -1,5 +1,20 @@
 import parsePhoneNumberFromString from "libphonenumber-js";
 import z from "zod";
+import {
+  carCategoryConfig,
+  motorcycleCategoryConfig,
+  vehicleTypeConfig,
+} from "./utils";
+
+const vehicleTypeValues = Object.keys(vehicleTypeConfig) as [
+  keyof typeof vehicleTypeConfig,
+  ...(keyof typeof vehicleTypeConfig)[],
+];
+
+const vehicleCategoryValues = [
+  ...Object.keys(carCategoryConfig),
+  ...Object.keys(motorcycleCategoryConfig),
+] as [string, ...string[]];
 
 // schema for phone number PH
 export const zPhone = z.string().refine((arg) => {
@@ -48,4 +63,50 @@ export const bookingFormSchema = z.object({
   phone: zPhone,
   email: z.email("Enter a valid email"),
   order_notes: z.string().optional(),
+});
+
+export const VehicleInsuranceSchema = z.object({
+  provider: z.string(),
+  expires_at: z.string(),
+  policy_number: z.string(),
+});
+
+export const createVehicleSchema = z.object({
+  make: z.string().min(1, "Make is required"),
+  model: z.string().min(1, "Model is required"),
+  year: z.coerce
+    .number()
+    .int("Year must be a whole number")
+    .min(1900, "Year must be 1900 or later")
+    .max(new Date().getFullYear() + 1, "Year cannot be in the future"),
+  vehicle_type: z.string().min(1, "Vehicle type is required"),
+  plate_number: z.string().optional(),
+  vin: z.string().optional(),
+  category: z.string().min(1, "Category is required"),
+  transmission: z.string().min(1, "Transmission is required"),
+  fuel_type: z.string().min(1, "Fuel type is required"),
+  seats: z.coerce
+    .number()
+    .int("Seats must be a whole number")
+    .positive("Seats must be greater than 0")
+    .optional(),
+  doors: z.coerce.number().optional(),
+  engine_displacement_cc: z.coerce.number().optional(),
+  color: z.string().min(1, "Color is required"),
+  mileage: z.coerce
+    .number()
+    .nonnegative("Mileage cannot be negative")
+    .optional(),
+  daily_rate: z.coerce.number().min(1, "Daily rate is required"),
+  currency: z.string().optional(),
+  vehicle_status: z.string().min(1, "Vehicle status is required"),
+  vehicle_availability: z.string().min(1, "Vehicle availability is required"),
+  features: z.array(z.string()).optional(),
+  images: z.array(z.url("Each image must be a valid URL")).optional(),
+  // insurance: VehicleInsuranceSchema.optional(),
+  description: z.string().optional(),
+});
+
+export const updateVehicleSchema = createVehicleSchema.extend({
+  id: z.number().min(1, "Id is required"),
 });

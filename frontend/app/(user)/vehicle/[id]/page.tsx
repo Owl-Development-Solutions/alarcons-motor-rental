@@ -1,19 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import VehicleImageGallery from "@/components/vehicles/vehicle-image-gallery";
-import VehicleSpec from "@/components/vehicles/vehicle-spec";
 import { getVehicle } from "@/data/actions/vehicle";
 import { generateVehicleMetadata } from "@/lib/seo/vehicle";
-import {
-  Calendar,
-  CircleCheck,
-  Cog,
-  DoorOpen,
-  Fuel,
-  Gauge,
-  Palette,
-  Users,
-} from "lucide-react";
-import BookingForm from "./booking-form";
 import VehicleDetailStepper from "./vehicle-detail-stepper";
 import { getCountries } from "@/data/actions/country";
 
