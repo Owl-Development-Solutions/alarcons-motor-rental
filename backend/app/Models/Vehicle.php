@@ -63,21 +63,21 @@ class Vehicle extends Model
 
     public function scopeAvailable($query)
     {
-        return $query->where('status', self::STATUS_AVAILABLE);
+        return $query->where('vehicle_availability', self::STATUS_AVAILABLE);
     }
 
     public function markReserved(): void
     {
-        $this->update(['status' => self::STATUS_RESERVED]);
+        $this->update(['vehicle_availability' => self::STATUS_RESERVED]);
     }
  
     public function markAvailable(): void
     {
-        $this->update(['status' => self::STATUS_AVAILABLE]);
+        $this->update(['vehicle_availability' => self::STATUS_AVAILABLE]);
     }
 
     public function markAsRented(): void
     {
-        $this->update(['status' => self::STATUS_RENTED]);
+        $this->update(['vehicle_availability' => self::STATUS_RENTED]);
     }
 }
