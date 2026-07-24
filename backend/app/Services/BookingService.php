@@ -114,7 +114,7 @@ class BookingService
             ->where('transmission', $referenceVehicle->transmission)
             ->where('fuel_type', $referenceVehicle->fuel_type)
             ->where('category', $referenceVehicle->category)
-            ->whereNotIn('status', [Vehicle::STATUS_MAINTENANCE, Vehicle::STATUS_UNAVAILABLE])
+            ->whereNotIn('vehicle_availability', [Vehicle::STATUS_MAINTENANCE, Vehicle::STATUS_UNAVAILABLE])
             ->orderBy('id')
             ->lockForUpdate()
             ->get();
@@ -325,7 +325,7 @@ class BookingService
     {
         $vehicle = $booking->vehicle()->lockForUpdate()->first();
 
-        if ($vehicle && $vehicle->status === Vehicle::STATUS_RESERVED) {
+        if ($vehicle && $vehicle->vehicle_availability === Vehicle::STATUS_RESERVED) {
             $stillHeld = Booking::where('vehicle_id', $vehicle->id)
                 ->where('id', '!=', $booking->id)
                 ->whereIn('status', Booking::BLOCKING_STATUSES)
