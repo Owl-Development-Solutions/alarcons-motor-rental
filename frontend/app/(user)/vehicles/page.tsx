@@ -3,7 +3,7 @@ import VehicleCarousel from "@/components/vehicles/vehicle-carousel";
 import VehicleFilter from "@/components/vehicles/vehicle-filter";
 
 import { getVehicles } from "@/data/actions/vehicle";
-import { VehicleFilters } from "@/data/models/vehicle.filter";
+import { VehicleFilters } from "@/data/models/filter.model";
 import { Car } from "lucide-react";
 
 interface VehiclePageProps {
