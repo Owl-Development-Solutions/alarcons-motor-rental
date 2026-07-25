@@ -16,7 +16,6 @@ import {
   getPageRange,
   PAGE_SIZE,
 } from "@/lib/utils";
-import { Badge } from "../ui/badge";
 import {
   Pagination,
   PaginationContent,
@@ -26,7 +25,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
-import { BOOKING_STATUS_BADGE_VARIANT } from "@/lib/booking.status";
+import BookingStatusBadge from "./booking-status-badge";
 
 const BookingTable = ({ bookings }: { bookings: Booking[] }) => {
   const [page, setPage] = useState(1);
@@ -73,12 +72,7 @@ const BookingTable = ({ bookings }: { bookings: Booking[] }) => {
                       {formatCurrency(booking.total_amount)}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={BOOKING_STATUS_BADGE_VARIANT[booking.status]}
-                        className="capitalize"
-                      >
-                        {booking.status}
-                      </Badge>
+                      <BookingStatusBadge status={booking.booking_status} />
                     </TableCell>
                   </TableRow>
                 );

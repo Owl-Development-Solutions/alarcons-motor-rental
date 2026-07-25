@@ -1,11 +1,11 @@
-import { Paginated } from "./paginated.model";
+import { Paginated, PaginatedResponse } from "./paginated.model";
 import { User } from "./user.model";
 import { Vehicle } from "./vehicle.model";
 
 export type BookingStatus =
   | "pending"
   | "confirmed"
-  | "active"
+  | "ongoing"
   | "completed"
   | "cancelled";
 
@@ -18,8 +18,10 @@ export type VehicleStatus =
 export const BLOCKING_BOOKING_STATUSES: BookingStatus[] = [
   "pending",
   "confirmed",
-  "active",
+  "ongoing",
 ];
+
+export type PaymentStatus = "paid" | "unpaid";
 
 export interface Booking {
   id: number;
@@ -30,7 +32,8 @@ export interface Booking {
   total_days: number;
   daily_rate: number;
   total_amount: number;
-  status: BookingStatus;
+  booking_status: BookingStatus;
+  payment_status: PaymentStatus;
 
   first_name: string;
   last_name: string;
@@ -69,4 +72,18 @@ export interface CreateBookingInput {
 
 export interface GetUserBookingResponse extends Paginated {
   data: Booking[];
+}
+
+export interface BookingResponse {
+  bookings: PaginatedResponse<Booking>;
+  counts: {
+    all: number;
+    unpaid: number;
+    paid: number;
+    booking_pending: number;
+    booking_confirmed: number;
+    booking_active: number;
+    booking_completed: number;
+    booking_cancelled: number;
+  };
 }

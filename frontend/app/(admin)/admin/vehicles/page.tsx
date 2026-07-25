@@ -3,15 +3,11 @@ import DataPagination from "@/components/shared/data-pagination";
 import { Button } from "@/components/ui/button";
 import VehicleFilter from "@/components/vehicles/vehicle-filter";
 import { getVehicles } from "@/data/actions/vehicle";
-import { VehicleFilters } from "@/data/models/vehicle.filter";
-import { Edit, Eye, Filter, Plus, Search, Trash2 } from "lucide-react";
+import { ParamsSearchProps, VehicleFilters } from "@/data/models/filter.model";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 
-interface VehiclePageProps {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}
-
-const AdminVehiclePage = async ({ searchParams }: VehiclePageProps) => {
+const AdminVehiclePage = async ({ searchParams }: ParamsSearchProps) => {
   const params = await searchParams;
 
   const filters: VehicleFilters = {

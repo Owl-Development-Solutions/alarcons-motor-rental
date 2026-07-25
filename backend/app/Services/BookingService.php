@@ -41,10 +41,6 @@ class BookingService
             $pickup = Carbon::parse($data['pickup_datetime']);
             $dropoff = Carbon::parse($data['dropoff_datetime']);
 
-            // Lock every unit of this model up front so two concurrent
-            // requests for the same model can't both grab the same unit —
-            // the second request waits for this transaction to finish
-            // before it can even look for a free unit.
             $units = $this->lockUnitsOfSameModel($referenceVehicle);
 
             if ($units->isEmpty()) {
@@ -64,15 +60,21 @@ class BookingService
             $totalDays = max(1, $pickup->diffInDays($dropoff));
             $totalAmount = $totalDays * (float) $vehicle->daily_rate;
 
+            // Guest checkout: if this email already belongs to a registered
+            // user, link the booking to that account right away instead of
+            // leaving user_id null until claimGuestBookings() runs on login.
+            $resolvedUserId = $user?->id ?? User::where('email', $data['email'])->value('id');
+
             $booking = Booking::create([
-                'user_id' => $user?->id,
+                'user_id' => $resolvedUserId,
                 'vehicle_id' => $vehicle->id,
                 'pickup_datetime' => $pickup,
                 'dropoff_datetime' => $dropoff,
                 'total_days' => $totalDays,
                 'daily_rate' => $vehicle->daily_rate,
                 'total_amount' => $totalAmount,
-                'status' => Booking::STATUS_PENDING,
+                'booking_status' => Booking::STATUS_PENDING,
+                'payment_status' => Booking::PAYMENT_UNPAID,
 
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
@@ -90,7 +92,7 @@ class BookingService
             // hold its lock from lockUnitsOfSameModel() above.
             $vehicle->markReserved();
 
-            return $booking->load('vehicle');
+            return $booking->load(['vehicle', 'user']);
         });
 
         // Outside the transaction: no point holding row locks open while
@@ -134,7 +136,7 @@ class BookingService
     {
         $exists = Booking::whereIn('vehicle_id', $vehicleIdsInModel)
             ->where('email', $email)
-            ->whereIn('status', Booking::BLOCKING_STATUSES)
+            ->whereIn('booking_status', Booking::BLOCKING_STATUSES)
             ->exists();
 
         if ($exists) {
@@ -236,7 +238,7 @@ class BookingService
                 throw new BookingException('This booking can no longer be cancelled.');
             }
 
-            $booking->update(['status' => Booking::STATUS_CANCELLED]);
+            $booking->update(['booking_status' => Booking::STATUS_CANCELLED]);
             $this->releaseVehicleIfUnheld($booking);
 
             return $booking;
@@ -261,11 +263,32 @@ class BookingService
                 throw new BookingException('Only pending bookings can be confirmed.');
             }
 
-            $booking->update(['status' => Booking::STATUS_CONFIRMED]);
+            $booking->update(['booking_status' => Booking::STATUS_CONFIRMED]);
 
             return $booking->fresh();
         });
     }
+
+    /**
+     * Mark a booking as paid. Independent of booking_status — a booking
+     * can be confirmed but still unpaid (meet-up hasn't happened yet),
+     * or paid but not yet confirmed, depending on your admin flow.
+     */
+    public function markBookingAsPaid(int $bookingId): Booking
+    {
+        return DB::transaction(function () use ($bookingId) {
+            $booking = Booking::lockForUpdate()->find($bookingId);
+
+            if (! $booking) {
+                throw new BookingException('Booking not found.', 404);
+            }
+
+            $booking->update(['payment_status' => Booking::PAYMENT_PAID]);
+
+            return $booking->fresh();
+        });
+    }
+
 
     /**
      * Admin-side cancel — not scoped to a particular user/email, for
@@ -285,7 +308,7 @@ class BookingService
                 throw new BookingException('This booking can no longer be cancelled.');
             }
 
-            $booking->update(['status' => Booking::STATUS_CANCELLED]);
+            $booking->update(['booking_status' => Booking::STATUS_CANCELLED]);
             $this->releaseVehicleIfUnheld($booking);
 
             return $booking;
@@ -300,19 +323,106 @@ class BookingService
         return DB::transaction(function () use ($bookingId) {
             $booking = Booking::with('vehicle')->lockForUpdate()->findOrFail($bookingId);
 
-            $booking->update(['status' => Booking::STATUS_COMPLETED]);
+            $booking->update(['booking_status' => Booking::STATUS_COMPLETED]);
             $this->releaseVehicleIfUnheld($booking);
 
             return $booking;
         });
     }
 
-    public function getAllBookings(?string $status = null)
+    public function getAllBookings(array $filters = [], int $perPage = 15)
     {
-        return Booking::with(['vehicle', 'user'])
-            ->when($status, fn ($query) => $query->where('status', $status))
+        $bookings = Booking::with(['vehicle', 'user'])
+            ->when($filters['booking_status'] ?? null, fn ($query, $status) => $query->where('booking_status', $status))
+            ->when($filters['payment_status'] ?? null, fn ($query, $status) => $query->where('payment_status', $status))
+            ->when($filters['country'] ?? null, fn ($query, $country) => $query->where('country', $country))
+            ->when($filters['email'] ?? null, fn ($query, $email) => $query->where('email', 'like', "%{$email}%"))
+            ->when($filters['name'] ?? null, function ($query, $name) {
+                $query->where(function ($q) use ($name) {
+                    // 1. Match the booking's own guest name fields
+                    $q->where('first_name', 'like', "%{$name}%")
+                        ->orWhere('last_name', 'like', "%{$name}%")
+                        // 2. Match a user that's actually linked via user_id
+                        ->orWhereHas('user', function ($userQuery) use ($name) {
+                            $userQuery->where('first_name', 'like', "%{$name}%")
+                                ->orWhere('last_name', 'like', "%{$name}%");
+                        })
+                        // 3. Match a user found only via email fallback (user_id is null)
+                        ->orWhereExists(function ($sub) use ($name) {
+                            $sub->select(DB::raw(1))
+                                ->from('users')
+                                ->whereColumn('users.email', 'bookings.email')
+                                ->whereNull('bookings.user_id')
+                                ->where(function ($userQuery) use ($name) {
+                                    $userQuery->where('users.first_name', 'like', "%{$name}%")
+                                        ->orWhere('users.last_name', 'like', "%{$name}%");
+                                });
+                        });
+                });
+            })
+            ->when($filters['pickup_from'] ?? null, fn ($query, $date) => $query->whereDate('pickup_datetime', '>=', $date))
+            ->when($filters['pickup_to'] ?? null, fn ($query, $date) => $query->whereDate('pickup_datetime', '<=', $date))
+            ->when($filters['dropoff_from'] ?? null, fn ($query, $date) => $query->whereDate('dropoff_datetime', '>=', $date))
+            ->when($filters['dropoff_to'] ?? null, fn ($query, $date) => $query->whereDate('dropoff_datetime', '<=', $date))
             ->latest()
-            ->get();
+            ->paginate($perPage);
+    
+        // Get emails of bookings that don't have a user_id
+        $missingEmails = $bookings->getCollection()
+            ->whereNull('user_id')
+            ->pluck('email')
+            ->filter()
+            ->unique();
+    
+        if ($missingEmails->isNotEmpty()) {
+            $usersByEmail = User::whereIn('email', $missingEmails)
+                ->get()
+                ->keyBy('email');
+    
+            $bookings->getCollection()->transform(function ($booking) use ($usersByEmail) {
+                if (!$booking->user_id && $booking->email) {
+                    $booking->setRelation(
+                        'user',
+                        $usersByEmail->get($booking->email)
+                    );
+                }
+    
+                return $booking;
+            });
+        }
+    
+        $counts = Booking::selectRaw("
+            COUNT(*) as all_count,
+            SUM(CASE WHEN payment_status = ? THEN 1 ELSE 0 END) as unpaid,
+            SUM(CASE WHEN payment_status = ? THEN 1 ELSE 0 END) as paid,
+            SUM(CASE WHEN booking_status = ? THEN 1 ELSE 0 END) as booking_pending,
+            SUM(CASE WHEN booking_status = ? THEN 1 ELSE 0 END) as booking_confirmed,
+            SUM(CASE WHEN booking_status = ? THEN 1 ELSE 0 END) as booking_active,
+            SUM(CASE WHEN booking_status = ? THEN 1 ELSE 0 END) as booking_completed,
+            SUM(CASE WHEN booking_status = ? THEN 1 ELSE 0 END) as booking_cancelled
+        ", [
+            Booking::PAYMENT_UNPAID,
+            Booking::PAYMENT_PAID,
+            Booking::STATUS_PENDING,
+            Booking::STATUS_CONFIRMED,
+            Booking::STATUS_ACTIVE,
+            Booking::STATUS_COMPLETED,
+            Booking::STATUS_CANCELLED,
+        ])->first();
+    
+        return [
+            'bookings' => $bookings,
+            'counts' => [
+                'all'               => (int) $counts->all_count,
+                'unpaid'            => (int) $counts->unpaid,
+                'paid'              => (int) $counts->paid,
+                'booking_pending'   => (int) $counts->booking_pending,
+                'booking_confirmed' => (int) $counts->booking_confirmed,
+                'booking_active'    => (int) $counts->booking_active,
+                'booking_completed' => (int) $counts->booking_completed,
+                'booking_cancelled' => (int) $counts->booking_cancelled,
+            ],
+        ];
     }
 
     /**
@@ -328,7 +438,7 @@ class BookingService
         if ($vehicle && $vehicle->vehicle_availability === Vehicle::STATUS_RESERVED) {
             $stillHeld = Booking::where('vehicle_id', $vehicle->id)
                 ->where('id', '!=', $booking->id)
-                ->whereIn('status', Booking::BLOCKING_STATUSES)
+                ->whereIn('booking_status', Booking::BLOCKING_STATUSES)
                 ->exists();
 
             if (! $stillHeld) {

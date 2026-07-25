@@ -60,14 +60,15 @@ const VehicleFilter = () => {
   };
 
   return (
-    <div className="flex gap-2 md:gap-4 items-center">
+    <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-center">
       {/* Search */}
-      <div className="relative flex-1 min-w-35">
+      <div className="relative w-full flex-1 min-w-0">
         {isPending ? (
           <Loader2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-orange-500 md:h-5 md:w-5" />
         ) : (
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 md:h-5 md:w-5" />
         )}
+
         <Input
           type="text"
           placeholder="Search make, model, type..."
@@ -80,10 +81,11 @@ const VehicleFilter = () => {
       {/* Filter Buttons */}
       <div
         className={cn(
-          "flex shrink-0 gap-1 md:gap-2 transition-opacity",
+          "flex w-full md:w-auto justify-center md:justify-start shrink-0 gap-1 md:gap-2 transition-opacity",
           isPending && "pointer-events-none opacity-60",
         )}
       >
+        {/* Buttons */}
         <Button
           variant="outline"
           className={cn(

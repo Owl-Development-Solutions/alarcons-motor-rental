@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="overflow-x-hidden">
         {/* Top bar */}
         <header className="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
@@ -33,7 +33,7 @@ export default async function DashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="p-4 sm:p-6 lg:p-8 overflow-auto">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -42,6 +42,7 @@ import { createVehicle, updateVehicle } from "@/data/actions/vehicle";
 import { useRouter } from "next/navigation";
 import { CarRentalErrors } from "@/data/errors/car-rental.errors";
 import { useState, useTransition } from "react";
+import { toastStyles } from "@/lib/toast.style";
 
 const inputClasses =
   "border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500";
@@ -106,7 +107,9 @@ const AdminAddVehicleForm = ({
       try {
         if (type === "Create") {
           const res = await createVehicle(values);
-          toast.success(res.message);
+          toast.success(res.message, {
+            style: toastStyles.success,
+          });
           router.push("/admin/vehicles");
           return;
         }
