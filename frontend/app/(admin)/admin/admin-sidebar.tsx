@@ -65,12 +65,12 @@ const navigation = [
     icon: Users,
     match: ["/admin/customers"],
   },
-  {
-    name: "Concerns",
-    href: "/admin/concerns",
-    icon: MessageSquare,
-    match: ["/admin/concerns"],
-  },
+  // {
+  //   name: "Concerns",
+  //   href: "/admin/concerns",
+  //   icon: MessageSquare,
+  //   match: ["/admin/concerns"],
+  // },
 ];
 
 const settingsNav = [

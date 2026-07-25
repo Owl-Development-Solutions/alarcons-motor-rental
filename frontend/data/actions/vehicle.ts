@@ -15,7 +15,7 @@ import { updateVehicleSchema } from "@/lib/validator";
 import { UTApi } from "uploadthing/server";
 import { PAGES_DIR_ALIAS } from "next/dist/lib/constants";
 import { PaginatedResponse } from "../models/paginated.model";
-import { VehicleFilters } from "../models/vehicle.filter";
+import { VehicleFilters } from "../models/filter.model";
 
 const utapi = new UTApi();
 

@@ -62,8 +62,9 @@ Route::prefix('v1')->group(function () {
 
         
             Route::get('/bookings', [AdminBookingController::class, 'index']);
-            Route::post('/bookings/{booking}/confirm', [AdminBookingController::class, 'confirm']);
-            Route::post('/bookings/{booking}/cancel', [AdminBookingController::class, 'cancel']);
+            Route::patch('/bookings/{booking}/confirm', [AdminBookingController::class, 'confirm']);
+            Route::patch('/bookings/{booking}/cancel', [AdminBookingController::class, 'cancel']);
+            Route::patch('/bookings/{booking}/mark-as-paid', [AdminBookingController::class, 'markAsPaid']);
         
         
         });

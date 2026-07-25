@@ -21,3 +21,7 @@ export async function serverFetch<T>(
 
   return res.data;
 }
+
+export type ActionResult<T> =
+  | { success: true; data: T; message: string }
+  | { success: false; message: string };

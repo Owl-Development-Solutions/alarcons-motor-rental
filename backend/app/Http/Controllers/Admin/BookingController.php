@@ -23,9 +23,23 @@ class BookingController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $bookings = $this->bookingService->getAllBookings($request->query('status'));
+        $filters = $request->only([
+            'booking_status',
+            'payment_status',
+            'country',
+            'email',
+            'name',
+            'pickup_from',
+            'pickup_to',
+            'dropoff_from',
+            'dropoff_to',
+        ]);
 
-        return response()->json(['data' => $bookings]);
+        $per_page = (int) $request->query('per_page', 15);
+
+        $bookings = $this->bookingService->getAllBookings($filters, $per_page);
+
+        return response()->json($bookings);
     }
 
     /**
@@ -59,4 +73,22 @@ class BookingController extends Controller
             'data' => $booking,
         ]);
     }
+
+    /**
+     * Mark a booking as paid once payment is confirmed at the meet-up.
+     */
+    public function markAsPaid(int $booking): JsonResponse
+    {
+        try {
+            $booking = $this->bookingService->markBookingAsPaid($booking);
+        } catch (BookingException $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getStatusCode());
+        }
+
+        return response()->json([
+            'message' => 'Booking marked as paid.',
+            'data' => $booking,
+        ]);
+    }
+
 }

@@ -13,10 +13,13 @@ class Booking extends Model
     // states involved. Admin confirms manually once payment is received.
     public const STATUS_PENDING = 'pending';
     public const STATUS_CONFIRMED = 'confirmed';
-    public const STATUS_ACTIVE = 'active';
+    public const STATUS_ACTIVE = 'ongoing';
     public const STATUS_COMPLETED = 'completed';
     public const STATUS_CANCELLED = 'cancelled';
 
+    public const PAYMENT_UNPAID = 'unpaid';
+    public const PAYMENT_PAID = 'paid';
+ 
     /**
      * Statuses that should still "hold" a vehicle's dates — used to
      * block overlapping bookings on the same vehicle.
@@ -29,7 +32,8 @@ class Booking extends Model
 
     protected $fillable = [
         'user_id', 'vehicle_id', 'pickup_datetime', 'dropoff_datetime',
-        'total_days', 'daily_rate', 'total_amount', 'status',
+        'total_days', 'daily_rate', 'total_amount', 'booking_status', 
+        'payment_status',
 
         // Checkout / billing details
         'first_name', 'last_name', 'company_name', 'country',
@@ -63,7 +67,7 @@ class Booking extends Model
     public function scopeOverlapping($query, int $vehicleId, $pickup, $dropoff)
     {
         return $query->where('vehicle_id', $vehicleId)
-            ->whereIn('status', self::BLOCKING_STATUSES)
+            ->whereIn('booking_status', self::BLOCKING_STATUSES)
             ->where('pickup_datetime', '<', $dropoff)
             ->where('dropoff_datetime', '>', $pickup);
     }
