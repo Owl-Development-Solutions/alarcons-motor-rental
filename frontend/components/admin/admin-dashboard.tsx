@@ -100,8 +100,6 @@ export function AdminDashboard({ dashboard }: { dashboard: DashboardData }) {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        {JSON.stringify(dashboard.charts.monthly_revenue)}
-
         <DashboardBarChart
           title={`Monthly revenue ${" " + " "} `}
           data={dashboard.charts.monthly_revenue}
