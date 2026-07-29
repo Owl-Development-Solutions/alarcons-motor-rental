@@ -72,6 +72,8 @@ const BookingForm = ({
           position: "bottom-right",
           style: toastStyles.success,
         });
+
+        router.push("/vehicles");
       }
     } catch (error) {
       console.log(error instanceof Error ? error.message : "");

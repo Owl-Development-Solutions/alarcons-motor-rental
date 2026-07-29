@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\BookingException;
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Services\BookingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,9 +15,7 @@ use Illuminate\Http\Request;
  */
 class BookingController extends Controller
 {
-    public function __construct(private BookingService $bookingService)
-    {
-    }
+    public function __construct(private BookingService $bookingService) {}
 
     /**
      * List bookings. Optional ?status=pending to see only what needs review.
@@ -40,6 +39,16 @@ class BookingController extends Controller
         $bookings = $this->bookingService->getAllBookings($filters, $per_page);
 
         return response()->json($bookings);
+    }
+
+    /**
+     * Show a booking for the admin detail page.
+     */
+    public function show(int $booking): JsonResponse
+    {
+        $booking = Booking::with(['vehicle', 'user'])->findOrFail($booking);
+
+        return response()->json(['data' => $booking]);
     }
 
     /**
@@ -90,5 +99,4 @@ class BookingController extends Controller
             'data' => $booking,
         ]);
     }
-
 }
