@@ -6,6 +6,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController; //for admin vehicle controller
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,18 +54,21 @@ Route::prefix('v1')->group(function () {
             Route::post('/vehicles', [AdminVehicleController::class, 'store']);
             Route::put('/vehicles/{vehicle}', [AdminVehicleController::class, 'update']);
             Route::delete('/vehicles/{vehicle}', [AdminVehicleController::class, 'destroy']);
-           
+
 
             // Hit immediately by the frontend on each UploadThing success/removal
             // so image state stays in sync without a separate "save" step.
             Route::post('/vehicles/{vehicle}/images', [AdminVehicleController::class, 'addImage']);
             Route::delete('/vehicles/{vehicle}/images', [AdminVehicleController::class, 'removeImage']);
 
-        
             Route::get('/bookings', [AdminBookingController::class, 'index']);
+            Route::get('/bookings/{booking}', [AdminBookingController::class, 'show']);
             Route::patch('/bookings/{booking}/confirm', [AdminBookingController::class, 'confirm']);
             Route::patch('/bookings/{booking}/cancel', [AdminBookingController::class, 'cancel']);
             Route::patch('/bookings/{booking}/mark-as-paid', [AdminBookingController::class, 'markAsPaid']);
+
+            Route::get('/notifications', [AdminNotificationController::class, 'index']);
+            Route::patch('/notifications/{notification}/read', [AdminNotificationController::class, 'markAsRead']);
         
         
         });

@@ -90,6 +90,22 @@ export const getAllUsersBooking = async (
   }
 };
 
+export const getAdminBooking = async (id: number): Promise<Booking> => {
+  const token = (await cookies()).get("auth_token")?.value;
+
+  try {
+    const response = await serverFetch<{ data: Booking }>(
+      `/admin/bookings/${id}`,
+      { method: "GET" },
+      token,
+    );
+
+    return response.data;
+  } catch (error) {
+    throw toDomainError(error);
+  }
+};
+
 export const markAsPaid = async (
   id: number,
 ): Promise<ActionResult<{ message: string }>> => {
