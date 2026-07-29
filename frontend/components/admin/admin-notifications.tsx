@@ -61,7 +61,7 @@ export default function AdminNotifications({
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="w-96 gap-0 overflow-hidden p-0 bg-white"
+        className="w-96 gap-0 overflow-hidden p-0 bg-white dark:bg-[#314158]"
       >
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-slate-700">
           <PopoverTitle>Notifications</PopoverTitle>

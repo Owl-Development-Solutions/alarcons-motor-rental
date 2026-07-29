@@ -28,3 +28,27 @@ export interface User {
   created_at: string;
   updated_at: string;
 }
+
+export interface AdminUser extends User {
+  name: string;
+  bookings_count: number;
+}
+
+export interface AdminUserInput {
+  first_name: string;
+  middle_name?: string | null;
+  last_name: string;
+  username: string;
+  email: string;
+  phone_number: string;
+  address: string;
+  role: string;
+  is_active: boolean;
+  password?: string;
+  password_confirmation?: string;
+}
+
+export interface AdminUsersResponse {
+  data: AdminUser[];
+  meta: { current_page: number; last_page: number; total: number };
+}

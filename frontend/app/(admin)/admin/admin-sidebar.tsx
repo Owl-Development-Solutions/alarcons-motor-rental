@@ -75,7 +75,7 @@ const navigation = [
 
 const settingsNav = [
   { name: "Profile", href: "/admin/profile", icon: User },
-  { name: "Notifications", href: "/admin/notifications", icon: Bell },
+  // { name: "Notifications", href: "/admin/notifications", icon: Bell },
   { name: "Logout", href: "/", icon: LogOut },
 ];
 

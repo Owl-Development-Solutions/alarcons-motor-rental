@@ -3,35 +3,47 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreUserRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Http\Resources\AdminUserResource;
 use App\Models\User;
+use App\Services\AdminUserService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index(): JsonResponse
-    {
-        $users = User::query()
-            ->latest()
-            ->get()
-            ->map(function (User $user) {
-                return [
-                    'id' => $user->id,
-                    'name' => trim("{$user->first_name} {$user->middle_name} {$user->last_name}"),
-                    'first_name' => $user->first_name,
-                    'last_name' => $user->last_name,
-                    'username' => $user->username,
-                    'email' => $user->email,
-                    'phone_number' => $user->phone_number,
-                    'address' => $user->address,
-                    'role' => $user->role,
-                    'status' => $user->is_active ? 'Active' : 'Inactive',
-                    'is_active' => $user->is_active,
-                    'is_verified' => $user->is_verified,
-                    'created_at' => $user->created_at?->toISOString(),
-                    'updated_at' => $user->updated_at?->toISOString(),
-                ];
-            });
+    public function __construct(private AdminUserService $userService) {}
 
-        return response()->json($users);
+    public function index(Request $request): JsonResponse
+    {
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'role' => ['nullable', 'in:admin,customer,sales'],
+            'is_active' => ['nullable', 'boolean'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
+        ]);
+
+        return AdminUserResource::collection($this->userService->list($filters))->response();
+    }
+
+    public function store(StoreUserRequest $request): JsonResponse
+    {
+        return (new AdminUserResource($this->userService->create($request->validated())))
+            ->response()
+            ->setStatusCode(201);
+    }
+
+    public function show(User $user): AdminUserResource { return new AdminUserResource($user->loadCount('bookings')); }
+
+    public function update(UpdateUserRequest $request, User $user): AdminUserResource
+    {
+        return new AdminUserResource($this->userService->update($user, $request->validated()));
+    }
+
+    public function destroy(Request $request, User $user): JsonResponse
+    {
+        $this->userService->delete($user, $request->user());
+        return response()->json(['message' => 'User deleted.']);
     }
 }
