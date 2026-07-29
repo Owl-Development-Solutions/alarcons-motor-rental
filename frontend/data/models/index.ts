@@ -3,3 +3,4 @@ export * from "./vehicle.model";
 export * from "./booking.model";
 export * from "./country.model";
 export * from "./notification.model";
+export * from "./dashboard.model";

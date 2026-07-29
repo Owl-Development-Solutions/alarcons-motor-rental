@@ -6,6 +6,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController; //for admin vehicle controller
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,7 @@ Route::prefix('v1')->group(function () {
 
         //Admin-only - protected by the 'admin' middleware alias.
         Route::middleware('admin')->prefix('admin')->group(function () {
+            Route::get('/dashboard', [AdminDashboardController::class, 'show']);
             Route::get('/users', [AdminUserController::class, 'index']);
             Route::post('/vehicles', [AdminVehicleController::class, 'store']);
             Route::put('/vehicles/{vehicle}', [AdminVehicleController::class, 'update']);
