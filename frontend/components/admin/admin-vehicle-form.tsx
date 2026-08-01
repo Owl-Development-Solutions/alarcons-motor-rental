@@ -70,7 +70,6 @@ const AdminAddVehicleForm = ({
     model: "",
     year: 0,
     vehicle_type: "",
-    plate_number: "",
     vin: "",
     category: "",
     transmission: "",
@@ -268,7 +267,7 @@ const AdminAddVehicleForm = ({
           />
         </div>
 
-        <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Controller
             name="make"
             control={form.control}
@@ -464,45 +463,10 @@ const AdminAddVehicleForm = ({
             )}
           />
 
-          <Controller
-            name="plate_number"
-            control={form.control}
-            render={({
-              field,
-              fieldState,
-            }: {
-              field: ControllerRenderProps<
-                z.infer<typeof createVehicleSchema>,
-                "plate_number"
-              >;
-              fieldState: ControllerFieldState;
-            }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>
-                  Vehicle Plate Number
-                  <span className="ml-1 text-xs font-normal text-muted-foreground">
-                    (Optional)
-                  </span>
-                </FieldLabel>
-                <Input
-                  type="text"
-                  placeholder="ABC-123422"
-                  {...field}
-                  aria-invalid={fieldState.invalid}
-                  className={`${inputClasses}`}
-                />
-                {fieldState.invalid && (
-                  <FieldError
-                    errors={[fieldState.error]}
-                    className="text-red-500!"
-                  />
-                )}
-              </Field>
-            )}
-          />
+          {/* Plate number field removed per request */}
         </div>
 
-        <div className="mt-2 grid md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="mt-2 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Controller
             name="vin"
             control={form.control}
@@ -719,7 +683,7 @@ const AdminAddVehicleForm = ({
           />
         </div>
 
-        <div className="mt-2 grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="mt-2 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Controller
             name="color"
             control={form.control}

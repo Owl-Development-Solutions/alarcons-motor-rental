@@ -1,8 +1,11 @@
+"use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import FeaturedVehicleCarousel from "../featured-vehicle-carousel";
 
 const Hero = () => {
+  const router = useRouter();
   return (
     <section className="relative py-20 lg:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,7 +30,10 @@ const Hero = () => {
               Reliable. Affordable. Always Ready.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="h-12 px-8 py-3 bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+              <Button
+                onClick={() => router.push("/vehicles")}
+                className="h-12 px-8 py-3 bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
+              >
                 Book Now
               </Button>
             </div>
