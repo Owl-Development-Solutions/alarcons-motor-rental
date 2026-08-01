@@ -1,4 +1,9 @@
+"use client";
+import { useState } from "react";
+import TermsModal from "./terms-modal";
+
 const About = () => {
+  const [open, setOpen] = useState(false);
   return (
     <section
       id="about"
@@ -52,6 +57,36 @@ const About = () => {
               <div className="text-gray-600 dark:text-gray-300">Support</div>
             </div>
           </div>
+        </div>
+        <div className="mt-12">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-inner flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+                Terms & Conditions
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 max-w-2xl">
+                The renter agrees to pay rental fees, taxes, and any additional
+                charges. A security deposit may be required. Unlimited mileage
+                within parts of Cebu; restrictions and penalties may apply.
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => setOpen(true)}
+                className="px-4 py-2 rounded-md bg-orange-600 text-white hover:bg-orange-700"
+              >
+                Read Full Terms
+              </button>
+              <a
+                href="#contact"
+                className="px-4 py-2 rounded-md border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700"
+              >
+                Contact Us
+              </a>
+            </div>
+          </div>
+          <TermsModal open={open} onClose={() => setOpen(false)} />
         </div>
       </div>
     </section>

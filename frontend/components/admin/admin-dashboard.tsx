@@ -21,6 +21,9 @@ import { DashboardStatCard } from "./dashboard-stat-card";
 export function AdminDashboard({ dashboard }: { dashboard: DashboardData }) {
   const { metrics } = dashboard;
   const statistics = [
+
+
+    
     ["Total vehicles", metrics.total_vehicles, Car, "bg-blue-500"],
     ["Available vehicles", metrics.available_vehicles, Car, "bg-green-500"],
     ["Rented vehicles", metrics.rented_vehicles, Car, "bg-orange-500"],
