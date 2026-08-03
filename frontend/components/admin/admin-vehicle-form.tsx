@@ -56,6 +56,11 @@ const AdminAddVehicleForm = ({
 }) => {
   const router = useRouter();
 
+  const vehicleData = {
+    ...vehicle,
+    vin: vehicle?.vin === null ? "" : (vehicle?.vin as string),
+  };
+
   const [isPending, startTransition] = useTransition();
 
   const defaultVehicleInsurance: VehicleInsurance = {
@@ -96,7 +101,7 @@ const AdminAddVehicleForm = ({
       type === "Update" ? updateVehicleSchema : createVehicleSchema,
     ) as Resolver<z.infer<typeof createVehicleSchema>>,
     defaultValues:
-      vehicle && type === "Update" ? vehicle : defaultVehicleValues,
+      vehicle && type === "Update" ? vehicleData : defaultVehicleValues,
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof createVehicleSchema>> = async (
