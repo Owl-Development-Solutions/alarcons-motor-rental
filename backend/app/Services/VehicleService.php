@@ -198,7 +198,7 @@ class VehicleService
             }
  
             $hasActiveBookings = Booking::where('vehicle_id', $vehicleId)
-                ->whereIn('status', Booking::BLOCKING_STATUSES)
+                ->whereIn('booking_status', Booking::BLOCKING_STATUSES)
                 ->exists();
  
             if ($hasActiveBookings) {
