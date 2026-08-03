@@ -2,6 +2,7 @@
 
 import CountryCombobox from "@/components/shared/country-combo-box";
 import { DateTimePickerField } from "@/components/shared/date-time-picker";
+import { FieldSelectItem } from "@/components/shared/field-select-item";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -22,7 +23,7 @@ import { createBooking } from "@/data/actions/booking";
 import { Country, CreateBookingInput, Vehicle } from "@/data/models";
 import { BookingFormValues } from "@/data/models/booking";
 import { toastStyles } from "@/lib/toast.style";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { bookingFormSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -53,6 +54,17 @@ const deliveryLocationOptions = [
   { value: "pier-port", label: "Pier or Port", price: 700 },
 ];
 
+const deliveryOption = [
+  {
+    value: "pickup",
+    label: "Pick-up",
+  },
+  {
+    value: "delivery",
+    label: "Delivery",
+  },
+];
+
 const BookingForm = ({
   vehicle,
   country,
@@ -61,12 +73,13 @@ const BookingForm = ({
   country: Country[];
 }) => {
   const router = useRouter();
+
   const bookingForm = useForm<z.infer<typeof bookingFormSchema>>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
       pickup_datetime: "",
       dropoff_datetime: "",
-      rental_mode: "pickup",
+      rental_mode: "",
       delivery_location: "",
       first_name: "",
       last_name: "",
@@ -88,6 +101,8 @@ const BookingForm = ({
       ...values,
       vehicle_id: vehicle.id,
     };
+
+    console.log(data);
 
     try {
       const res = await createBooking(data);
@@ -176,63 +191,37 @@ const BookingForm = ({
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-4">
-              <Controller
-                name="rental_mode"
-                control={bookingForm.control}
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel className={labelClass}>Rental Option</FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white">
-                        <SelectValue placeholder="Select pick-up or delivered" />
-                      </SelectTrigger>
-                      <SelectContent
-                        alignItemWithTrigger={false}
-                        className="rounded-lg border border-orange-200 bg-white text-gray-900 shadow-lg dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                      >
-                        <SelectItem value="Pickup">Pick-up</SelectItem>
-                        <SelectItem value="Delivered">Delivered</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="mt-2 text-xs text-gray-500 dark:text-slate-400">
-                      Choose pick-up if you will collect the vehicle yourself. Choose delivered if you want the vehicle brought to your location.
-                    </p>
-                  </Field>
-                )}
-              />
+              <div>
+                <FieldSelectItem
+                  name="rental_mode"
+                  control={bookingForm.control}
+                  label="Rental Option"
+                  placeholder="Select pick-up or delivered"
+                  options={deliveryOption}
+                />
+                <p className="mt-2 text-xs text-gray-500 dark:text-slate-400">
+                  Choose pick-up if you will collect the vehicle yourself.
+                  Choose delivered if you want the vehicle brought to your
+                  location.
+                </p>
+              </div>
 
-              {rentalMode === "delivered" && (
-                <Controller
+              {rentalMode === "delivery" && (
+                <FieldSelectItem
                   name="delivery_location"
                   control={bookingForm.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel className={labelClass}>
-                        Delivery Location
-                      </FieldLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white">
-                          <SelectValue placeholder="Select a delivery location" />
-                        </SelectTrigger>
-                        <SelectContent
-                          alignItemWithTrigger={false}
-                          className="rounded-lg border border-orange-200 bg-white text-gray-900 shadow-lg dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                        >
-                          {deliveryLocationOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label} — ₱{option.price.toLocaleString("en-PH")}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {fieldState.invalid && (
-                        <FieldError
-                          errors={[fieldState.error]}
-                          className="text-red-500!"
-                        />
-                      )}
-                    </Field>
+                  label="Delivery Location"
+                  placeholder="Select a delivery location"
+                  options={deliveryLocationOptions}
+                  renderTrigger={(o) =>
+                    `${o.label} — ₱${(o.price as number).toLocaleString("en-PH")}`
+                  }
+                  renderItem={(o) => (
+                    <>
+                      {o.label} — ₱{(o.price as number).toLocaleString("en-PH")}
+                    </>
                   )}
+                  labelClassName={labelClass}
                 />
               )}
             </div>
