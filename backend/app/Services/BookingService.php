@@ -57,8 +57,20 @@ class BookingService
                 throw new BookingException('All units of this vehicle are booked for the selected dates.', 409);
             }
 
+            $rentalMode = $data['rental_mode'] ?? Booking::RENTAL_MODE_PICKUP;
+            $deliveryLocation = $rentalMode === Booking::RENTAL_MODE_DELIVERY ? $data['delivery_location'] : null;
+
+            if ($rentalMode === Booking::RENTAL_MODE_DELIVERY && ! $deliveryLocation) {
+                throw new BookingException('Please select a delivery location.');
+            }
+
+            if ($deliveryLocation && ! array_key_exists($deliveryLocation, Booking::DELIVERY_LOCATIONS)) {
+                throw new BookingException('Invalid delivery location.');
+            }
+
             $totalDays = max(1, $pickup->diffInDays($dropoff));
-            $totalAmount = $totalDays * (float) $vehicle->daily_rate;
+            $deliveryFee = Booking::deliveryFeeFor($deliveryLocation);
+            $totalAmount = ($totalDays * (float) $vehicle->daily_rate) + $deliveryFee;
 
             // Guest checkout: if this email already belongs to a registered
             // user, link the booking to that account right away instead of
@@ -75,6 +87,8 @@ class BookingService
                 'total_amount' => $totalAmount,
                 'booking_status' => Booking::STATUS_PENDING,
                 'payment_status' => Booking::PAYMENT_UNPAID,
+                'rental_mode' => $rentalMode,
+                'delivery_location' => $deliveryLocation,
 
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],

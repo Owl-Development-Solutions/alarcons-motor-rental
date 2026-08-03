@@ -2,6 +2,7 @@
 
 import CountryCombobox from "@/components/shared/country-combo-box";
 import { DateTimePickerField } from "@/components/shared/date-time-picker";
+import { FieldSelectItem } from "@/components/shared/field-select-item";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -10,12 +11,19 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { createBooking } from "@/data/actions/booking";
 import { Country, CreateBookingInput, Vehicle } from "@/data/models";
 import { BookingFormValues } from "@/data/models/booking";
 import { toastStyles } from "@/lib/toast.style";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { bookingFormSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -32,6 +40,31 @@ const inputClass =
 const labelClass =
   "block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5";
 
+const deliveryLocationOptions = [
+  { value: "cebu-city", label: "Cebu City", price: 800 },
+  { value: "lapu-lapu-city", label: "Lapu-Lapu City", price: 700 },
+  { value: "mandaue-city", label: "Mandaue City", price: 700 },
+  { value: "talisay-city", label: "Talisay City", price: 800 },
+  { value: "naga-city", label: "Naga City", price: 1000 },
+  { value: "carcar-city", label: "Carcar City", price: 1000 },
+  { value: "danao-city", label: "Danao City", price: 1000 },
+  { value: "bogo-city", label: "Bogo City", price: 1500 },
+  { value: "toledo-city", label: "Toledo City", price: 1500 },
+  { value: "airport", label: "Airport", price: 600 },
+  { value: "pier-port", label: "Pier or Port", price: 700 },
+];
+
+const deliveryOption = [
+  {
+    value: "pickup",
+    label: "Pick-up",
+  },
+  {
+    value: "delivery",
+    label: "Delivery",
+  },
+];
+
 const BookingForm = ({
   vehicle,
   country,
@@ -40,11 +73,14 @@ const BookingForm = ({
   country: Country[];
 }) => {
   const router = useRouter();
+
   const bookingForm = useForm<z.infer<typeof bookingFormSchema>>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
       pickup_datetime: "",
       dropoff_datetime: "",
+      rental_mode: "",
+      delivery_location: "",
       first_name: "",
       last_name: "",
       company_name: "",
@@ -58,11 +94,15 @@ const BookingForm = ({
     },
   });
 
+  const rentalMode = bookingForm.watch("rental_mode");
+
   const onBookingSubmit = async (values: z.infer<typeof bookingFormSchema>) => {
     const data: BookingFormValues = {
       ...values,
       vehicle_id: vehicle.id,
     };
+
+    console.log(data);
 
     try {
       const res = await createBooking(data);
@@ -148,6 +188,42 @@ const BookingForm = ({
                   </>
                 )}
               />
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-4">
+              <div>
+                <FieldSelectItem
+                  name="rental_mode"
+                  control={bookingForm.control}
+                  label="Rental Option"
+                  placeholder="Select pick-up or delivered"
+                  options={deliveryOption}
+                />
+                <p className="mt-2 text-xs text-gray-500 dark:text-slate-400">
+                  Choose pick-up if you will collect the vehicle yourself.
+                  Choose delivered if you want the vehicle brought to your
+                  location.
+                </p>
+              </div>
+
+              {rentalMode === "delivery" && (
+                <FieldSelectItem
+                  name="delivery_location"
+                  control={bookingForm.control}
+                  label="Delivery Location"
+                  placeholder="Select a delivery location"
+                  options={deliveryLocationOptions}
+                  renderTrigger={(o) =>
+                    `${o.label} — ₱${(o.price as number).toLocaleString("en-PH")}`
+                  }
+                  renderItem={(o) => (
+                    <>
+                      {o.label} — ₱{(o.price as number).toLocaleString("en-PH")}
+                    </>
+                  )}
+                  labelClassName={labelClass}
+                />
+              )}
             </div>
           </div>
 

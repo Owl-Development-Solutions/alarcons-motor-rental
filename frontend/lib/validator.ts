@@ -50,20 +50,32 @@ export const signUpFormSchema = z
     path: ["password_confirmation"],
   });
 
-export const bookingFormSchema = z.object({
-  pickup_datetime: z.string().min(1, "Pickup date & time is required"),
-  dropoff_datetime: z.string().min(1, "Drop-off date & time is required"),
-  first_name: z.string().min(1, "First name is required"),
-  last_name: z.string().min(1, "Last name is required"),
-  company_name: z.string().optional(),
-  country: z.string().min(1, "Country is required"),
-  street_address: z.string().min(1, "Street address is required"),
-  city: z.string().min(1, "City is required"),
-  postcode: z.string().min(1, "Postcode is required"),
-  phone: zPhone,
-  email: z.email("Enter a valid email"),
-  order_notes: z.string().optional(),
-});
+export const bookingFormSchema = z
+  .object({
+    pickup_datetime: z.string().min(1, "Pickup date & time is required"),
+    dropoff_datetime: z.string().min(1, "Drop-off date & time is required"),
+    rental_mode: z.string().min(1, "Rental mode is required"),
+    delivery_location: z.string().optional(),
+    first_name: z.string().min(1, "First name is required"),
+    last_name: z.string().min(1, "Last name is required"),
+    company_name: z.string().optional(),
+    country: z.string().min(1, "Country is required"),
+    street_address: z.string().min(1, "Street address is required"),
+    city: z.string().min(1, "City is required"),
+    postcode: z.string().min(1, "Postcode is required"),
+    phone: zPhone,
+    email: z.email("Enter a valid email"),
+    order_notes: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.rental_mode === "delivery" && !data.delivery_location) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please select a delivery location",
+        path: ["delivery_location"],
+      });
+    }
+  });
 
 export const VehicleInsuranceSchema = z.object({
   provider: z.string(),
