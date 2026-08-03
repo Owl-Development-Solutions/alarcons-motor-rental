@@ -53,6 +53,10 @@ export const signUpFormSchema = z
 export const bookingFormSchema = z.object({
   pickup_datetime: z.string().min(1, "Pickup date & time is required"),
   dropoff_datetime: z.string().min(1, "Drop-off date & time is required"),
+  rental_mode: z.enum(["pickup", "delivered"], {
+    errorMap: () => ({ message: "Please select a rental option" }),
+  }),
+  delivery_location: z.string().optional(),
   first_name: z.string().min(1, "First name is required"),
   last_name: z.string().min(1, "Last name is required"),
   company_name: z.string().optional(),
@@ -63,6 +67,14 @@ export const bookingFormSchema = z.object({
   phone: zPhone,
   email: z.email("Enter a valid email"),
   order_notes: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.rental_mode === "delivered" && !data.delivery_location) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Please select a delivery location",
+      path: ["delivery_location"],
+    });
+  }
 });
 
 export const VehicleInsuranceSchema = z.object({

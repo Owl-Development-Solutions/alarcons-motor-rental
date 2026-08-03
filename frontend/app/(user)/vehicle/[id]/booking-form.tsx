@@ -10,6 +10,13 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { createBooking } from "@/data/actions/booking";
 import { Country, CreateBookingInput, Vehicle } from "@/data/models";
@@ -32,6 +39,20 @@ const inputClass =
 const labelClass =
   "block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5";
 
+const deliveryLocationOptions = [
+  { value: "cebu-city", label: "Cebu City", price: 800 },
+  { value: "lapu-lapu-city", label: "Lapu-Lapu City", price: 700 },
+  { value: "mandaue-city", label: "Mandaue City", price: 700 },
+  { value: "talisay-city", label: "Talisay City", price: 800 },
+  { value: "naga-city", label: "Naga City", price: 1000 },
+  { value: "carcar-city", label: "Carcar City", price: 1000 },
+  { value: "danao-city", label: "Danao City", price: 1000 },
+  { value: "bogo-city", label: "Bogo City", price: 1500 },
+  { value: "toledo-city", label: "Toledo City", price: 1500 },
+  { value: "airport", label: "Airport", price: 600 },
+  { value: "pier-port", label: "Pier or Port", price: 700 },
+];
+
 const BookingForm = ({
   vehicle,
   country,
@@ -45,6 +66,8 @@ const BookingForm = ({
     defaultValues: {
       pickup_datetime: "",
       dropoff_datetime: "",
+      rental_mode: "pickup",
+      delivery_location: "",
       first_name: "",
       last_name: "",
       company_name: "",
@@ -57,6 +80,8 @@ const BookingForm = ({
       order_notes: "",
     },
   });
+
+  const rentalMode = bookingForm.watch("rental_mode");
 
   const onBookingSubmit = async (values: z.infer<typeof bookingFormSchema>) => {
     const data: BookingFormValues = {
@@ -148,6 +173,68 @@ const BookingForm = ({
                   </>
                 )}
               />
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-4">
+              <Controller
+                name="rental_mode"
+                control={bookingForm.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel className={labelClass}>Rental Option</FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white">
+                        <SelectValue placeholder="Select pick-up or delivered" />
+                      </SelectTrigger>
+                      <SelectContent
+                        alignItemWithTrigger={false}
+                        className="rounded-lg border border-orange-200 bg-white text-gray-900 shadow-lg dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                      >
+                        <SelectItem value="Pickup">Pick-up</SelectItem>
+                        <SelectItem value="Delivered">Delivered</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="mt-2 text-xs text-gray-500 dark:text-slate-400">
+                      Choose pick-up if you will collect the vehicle yourself. Choose delivered if you want the vehicle brought to your location.
+                    </p>
+                  </Field>
+                )}
+              />
+
+              {rentalMode === "delivered" && (
+                <Controller
+                  name="delivery_location"
+                  control={bookingForm.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel className={labelClass}>
+                        Delivery Location
+                      </FieldLabel>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white">
+                          <SelectValue placeholder="Select a delivery location" />
+                        </SelectTrigger>
+                        <SelectContent
+                          alignItemWithTrigger={false}
+                          className="rounded-lg border border-orange-200 bg-white text-gray-900 shadow-lg dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                        >
+                          {deliveryLocationOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label} — ₱{option.price.toLocaleString("en-PH")}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {fieldState.invalid && (
+                        <FieldError
+                          errors={[fieldState.error]}
+                          className="text-red-500!"
+                        />
+                      )}
+                    </Field>
+                  )}
+                />
+              )}
             </div>
           </div>
 
