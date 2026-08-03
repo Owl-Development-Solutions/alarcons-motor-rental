@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Booking;
 
+use App\Models\Booking;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreBookingRequest extends FormRequest
 {
@@ -17,6 +19,13 @@ class StoreBookingRequest extends FormRequest
             'vehicle_id' => ['required', 'integer', 'exists:vehicles,id'],
             'pickup_datetime' => ['required', 'date', 'after_or_equal:now'],
             'dropoff_datetime' => ['required', 'date', 'after:pickup_datetime'],
+
+            'rental_mode' => ['required', Rule::in([Booking::RENTAL_MODE_PICKUP, Booking::RENTAL_MODE_DELIVERY])],
+            'delivery_location' => [
+                'nullable',
+                'required_if:rental_mode,' . Booking::RENTAL_MODE_DELIVERY,
+                Rule::in(array_keys(Booking::DELIVERY_LOCATIONS)),
+            ],
 
             // Checkout / billing details
             'first_name' => ['required', 'string', 'max:255'],
