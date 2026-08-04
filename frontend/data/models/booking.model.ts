@@ -34,6 +34,8 @@ export interface Booking {
   total_amount: number;
   booking_status: BookingStatus;
   payment_status: PaymentStatus;
+  rental_mode: string | null;
+  delivery_location: string | null;
 
   first_name: string;
   last_name: string;

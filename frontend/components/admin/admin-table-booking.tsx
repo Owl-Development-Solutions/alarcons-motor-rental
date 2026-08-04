@@ -13,7 +13,7 @@ import { formatCurrency, formatDateTime } from "@/lib/utils";
 import BookingStatusBadge from "../booking/booking-status-badge";
 import BookingPaymentStatusBadge from "../booking/booking-payment-status";
 import BookingActionsMenu from "../booking/booking-actions-menu";
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import {
   cancelBooking,
   confirmbooking,
@@ -22,6 +22,7 @@ import {
 import { toast } from "sonner";
 import { toastStyles } from "@/lib/toast.style";
 import { CarRentalErrors } from "@/data/errors/car-rental.errors";
+import BookingDetailModal from "./admin-booking-modal";
 
 const headerList = [
   "Booking ID",
@@ -39,6 +40,21 @@ const headerList = [
 
 const AdminTableBooking = ({ bookings }: { bookings: Booking[] }) => {
   const [isPending, startTransition] = useTransition();
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleView = (id: number) => {
+    const booking = bookings.find((b) => b.id === id);
+    if (booking) {
+      setSelectedBooking(booking);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedBooking(null);
+  };
 
   const updatePaymentStatus = (id: number) => {
     startTransition(async () => {
@@ -164,6 +180,7 @@ const AdminTableBooking = ({ bookings }: { bookings: Booking[] }) => {
                     onMarkAsPaid={(id) => updatePaymentStatus(id)}
                     onMarkAsCompleted={(id) => updateBookingStatus(id)}
                     onCancelBooking={(id) => handleCancelBooking(id)}
+                    onView={(id) => handleView(id)}
                     disabled={isPending}
                   />
                 </div>
@@ -172,6 +189,11 @@ const AdminTableBooking = ({ bookings }: { bookings: Booking[] }) => {
           ))}
         </TableBody>
       </Table>
+      <BookingDetailModal
+        booking={selectedBooking}
+        open={isModalOpen}
+        onOpenChange={handleModalClose}
+      />
     </>
   );
 };

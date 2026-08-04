@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 import {
   CheckCircle2,
   CircleDollarSign,
+  Eye,
   MoreVertical,
   XCircle,
 } from "lucide-react";
@@ -20,6 +21,7 @@ interface BookingActionsMenuProps {
   onMarkAsPaid: (id: number) => void;
   onMarkAsCompleted: (id: number) => void;
   onCancelBooking: (id: number) => void;
+  onView: (id: number) => void;
   disabled: boolean;
 }
 
@@ -28,6 +30,7 @@ const BookingActionsMenu = ({
   onMarkAsPaid,
   onMarkAsCompleted,
   onCancelBooking,
+  onView,
   disabled,
 }: BookingActionsMenuProps) => {
   const isUnpaid = booking.payment_status === "unpaid";
@@ -56,6 +59,14 @@ const BookingActionsMenu = ({
         align="end"
         className="bg-white dark:bg-[#111729] w-50 "
       >
+        <DropdownMenuItem
+          onClick={() => onView(booking.id)}
+          className="hover:bg-blue-100! hover:text-blue-800!"
+        >
+          <Eye className="mr-2 h-4 w-4" />
+          View
+        </DropdownMenuItem>
+
         {isUnpaid && (
           <DropdownMenuItem
             onClick={() => onMarkAsPaid(booking.id)}
