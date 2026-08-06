@@ -92,7 +92,6 @@ export const createVehicleSchema = z.object({
     .min(1900, "Year must be 1900 or later")
     .max(new Date().getFullYear() + 1, "Year cannot be in the future"),
   vehicle_type: z.string().min(1, "Vehicle type is required"),
-  plate_number: z.string().optional(),
   vin: z.string().optional(),
   category: z.string().min(1, "Category is required"),
   transmission: z.string().min(1, "Transmission is required"),
