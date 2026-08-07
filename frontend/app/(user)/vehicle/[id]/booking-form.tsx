@@ -100,6 +100,8 @@ const BookingForm = ({
     const data: BookingFormValues = {
       ...values,
       vehicle_id: vehicle.id,
+      // @TODO
+      country: "Philippines",
     };
 
     console.log(data);
@@ -314,7 +316,7 @@ const BookingForm = ({
             <h3 className="mb-3 text-sm font-medium text-gray-500 dark:text-slate-400">
               Address
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
               <Controller
                 name="street_address"
                 control={bookingForm.control}
@@ -339,7 +341,9 @@ const BookingForm = ({
                   </Field>
                 )}
               />
+            </div>
 
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Controller
                 name="city"
                 control={bookingForm.control}
@@ -385,7 +389,9 @@ const BookingForm = ({
                   </Field>
                 )}
               />
-              <Controller
+            </div>
+
+            {/* <Controller
                 control={bookingForm.control}
                 name="country"
                 render={({ field, fieldState }) => (
@@ -406,8 +412,7 @@ const BookingForm = ({
                     )}
                   </Field>
                 )}
-              />
-            </div>
+              /> */}
           </div>
 
           {/* Contact */}
