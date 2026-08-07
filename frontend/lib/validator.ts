@@ -59,7 +59,7 @@ export const bookingFormSchema = z
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
     company_name: z.string().optional(),
-    country: z.string().min(1, "Country is required"),
+    country: z.string().optional(),
     street_address: z.string().min(1, "Street address is required"),
     city: z.string().min(1, "City is required"),
     postcode: z.string().min(1, "Postcode is required"),
