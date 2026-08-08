@@ -82,12 +82,12 @@ const Contact = () => {
               Location
             </h3>
             <a
-              href="https://www.google.com/maps/place/Ng+Lucing+Store/@10.3090792,123.9427827,1750m/data=!3m1!1e3!4m6!3m5!1s0x33a9999679d66c25:0x31fa42a6abfe6120!8m2!3d10.3088698!4d123.9469143!16s%2Fg%2F11bwnxvf1p?entry=ttu&g_ep=EgoyMDI2MDcwNi4wIKXMDSoASAFQAw%3D%3D"
+              href="https://www.google.com/maps/place/JE+Cebu+Tour+%7C+Car+Rental+Cebu/@10.3092709,123.9467135,137m/data=!3m1!1e3!4m14!1m7!3m6!1s0x33a9999679d66c25:0x31fa42a6abfe6120!2sNg+Lucing+Store!8m2!3d10.3088698!4d123.9469143!16s%2Fg%2F11bwnxvf1p!3m5!1s0x33a999ff948bd4f1:0xa345e688ff5edbd6!8m2!3d10.3089927!4d123.946947!16s%2Fg%2F11npdj0jf1?entry=ttu&g_ep=EgoyMDI2MDgwNS4xIKXMDSoASAFQAw%3D%3D"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-600 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors underline"
             >
-              Ng Lucing Store
+              JE Cebu Tours
             </a>
           </div>
         </div>

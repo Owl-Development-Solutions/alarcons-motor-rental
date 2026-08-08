@@ -27,7 +27,7 @@ export default function TermsModal({ open, onClose }: Props) {
       <div className="relative max-w-3xl w-full bg-white dark:bg-slate-800 rounded-lg shadow-xl overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-slate-700">
           <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Terms and Conditions
+            Terms & Conditions
           </h4>
           <button
             onClick={onClose}
@@ -39,117 +39,84 @@ export default function TermsModal({ open, onClose }: Props) {
         </div>
 
         <div className="p-6 max-h-[60vh] overflow-y-auto text-sm text-gray-700 dark:text-gray-300 space-y-4 no-scrollbar">
-          {/* Insert the terms content here - keep markup semantic and readable */}
           <p>
-            The renter agrees to pay the rental fee, taxes, and any additional
-            charges. A security deposit may be required and will be refunded,
-            minus any deductions.
-          </p>
-          <p>
-            Unit is unlimited mileage but only allowed in part of Cebu. Bringing
-            the unit by ferries will have a penalty of 3000 depending on the
-            days.
-          </p>
-          <p>
-            The borrower also agrees to clean or wash the vehicle or pay for 300
-            (small car), 350 (SUV), and 400 (Van).
+            Welcome to JE Cebu Tours. Please read these terms carefully before using our car rental services.
           </p>
 
+          <h5 className="font-semibold">1. Booking and Rental Agreement</h5>
           <ul className="list-disc list-inside space-y-1">
             <li>
-              Renter must provide a valid ID for renting. Company ID is not
-              accepted. For long term rent, owner must hold a valid ID for the
-              full rental period.
+              By making a reservation with JE Cebu Tours, you agree to the terms and conditions outlined herein.
             </li>
             <li>
-              Do not use the vehicle for practice, ride-hailing, racing, towing,
-              or commercial activities unless authorized.
-            </li>
-            <li>
-              Renter must comply with all traffic laws. Once violated, renter
-              must present only his/her driver's license and the OR/CR of the
-              unit.
-            </li>
-            <li>
-              Smoking inside the vehicle and transporting hazardous or illegal
-              materials is prohibited.
+              The rental agreement is formed between the renter and JE Cebu Tours upon confirmation of the booking.
             </li>
           </ul>
 
+          <h5 className="font-semibold">2. Driver’s Age and License</h5>
+          <ul className="list-disc list-inside space-y-1">
+            <li>
+              The primary driver must be at least 21 years old and hold a valid driver’s license.
+            </li>
+            <li>
+              Additional drivers must be declared and approved by JE Cebu Tours before driving the rented vehicle.
+            </li>
+          </ul>
+
+          <h5 className="font-semibold">3. Reservation and Payment</h5>
+          <ul className="list-disc list-inside space-y-1">
+            <li>Reservations are subject to vehicle availability.</li>
+            <li>Payment terms and methods will be outlined during the booking process.</li>
+            <li>Cancellation policies and associated fees will be communicated at the time of reservation.</li>
+          </ul>
+
+          <h5 className="font-semibold">4. Vehicle Usage</h5>
+          <ul className="list-disc list-inside space-y-1">
+            <li>
+              The rented vehicle is to be used within the designated areas and must not be taken outside Cebu without prior consent.
+            </li>
+            <li>
+              It should not be used for any illegal purposes, racing, or transportation of hazardous materials.
+            </li>
+          </ul>
+
+          <h5 className="font-semibold">5. Insurance and Damage</h5>
+          <ul className="list-disc list-inside space-y-1">
+            <li>
+              The rental fee includes basic insurance coverage. Additional insurance options may be available at an extra cost.
+            </li>
+            <li>
+              Any damage to the vehicle during the rental period must be reported immediately to JE Cebu Tours.
+            </li>
+          </ul>
+
+          <h5 className="font-semibold">6. Return of the Vehicle</h5>
+          <ul className="list-disc list-inside space-y-1">
+            <li>The vehicle should be returned at the agreed time and location.</li>
+            <li>Late returns may incur additional charges as per the agreement.</li>
+          </ul>
+
+          <h5 className="font-semibold">7. Liability</h5>
           <p>
-            The vehicle must be returned in good condition, subject to normal
-            wear and tear. All keys, documents, and accessories must be
-            returned.
+            JE Cebu Tours is not liable for any loss, damage, or injury arising from the use of the rented vehicle.
+          </p>
+
+          <h5 className="font-semibold">8. Modifications to Terms</h5>
+          <p>
+            These terms and conditions are subject to change without prior notice. Any changes will be updated on our website.
+          </p>
+
+          <h5 className="font-semibold">9. Governing Law</h5>
+          <p>
+            Any disputes arising from these terms and conditions will be governed by the laws of Cebu City, Philippines.
           </p>
 
           <p>
-            The vehicle is checked before release to ensure all tires,
-            including spare tire, are in good and safe condition. The renter is
-            responsible for any tire damage during the rental period; if the
-            tire can be vulcanized, the renter will shoulder the repair cost.
+            By using our services, you acknowledge that you have read, understood, and agreed to these terms and conditions.
           </p>
 
           <p>
-            Responsibility for loss and damage to the vehicle: LESSEE is
-            responsible for the FULL VALUE regardless of fault. Lessee is
-            responsible for returning the vehicle with as much fuel in the
-            tank as when received. If returned with less fuel, a fuel charge
-            applies. At the time of return, LESSEE will not receive credit for
-            any fuel remaining in the vehicle.
-          </p>
-
-          <p>
-            LIABILITY: If the rented vehicle has been lost or stolen or in any
-            case the renter can't return the vehicle, the renter is
-            responsible for the whole amount of the rented vehicle.
-          </p>
-
-          <p>
-            EXTENSION PER HOUR RATE: 250 per hour for small car, 350 SUV and
-            VAN. If the renter exceeded more than 6 hours, the lessee agrees to
-            pay the whole day rent. If unit returned early, we will not refund
-            the remaining time.
-          </p>
-
-          <p>
-            We require at least a Non-professional Driver's License. Student
-            Permit are not allowed to rent. Only the driver declared in the
-            rental agreement is authorized to drive the vehicle.
-          </p>
-
-          <p>
-            Renter shall bear the cost of gas during the use of vehicle (same
-            gas level upon returning the vehicle). Charges may apply on the
-            excess time of use if more than the actual rental booking
-            (Motorcycle - 10% of full price, Car - 10% of full price, Carwash -
-            250php).
-          </p>
-
-          <p>
-            Extension of rent should be notified by the renter 2 hours prior to
-            end of contract. Failure to inform will be charged for full day
-            rent. 15 minutes will be allocated before charging it to 1 day
-            extensions.
-          </p>
-
-          <p>
-            NO REFUND POLICY. Early return of rented unit will still be charged
-            full. Unlimited mileage. Restrictions may apply when taking or
-            transporting the rented vehicle outside the Province of Cebu.
-          </p>
-
-          <p>
-            Check the unit before signing the contract. You can also take
-            photos &amp; videos on the return unit. In case of accident, theft,
-            loss, and damages of vehicle, helmets or any parts and raincoats,
-            renter will cover the necessary cost of repairs and replacements.
-          </p>
-
-          <p>
-            Renter must comply with national traffic laws and regulations. Not
-            to engage in subleasing or unauthorized use. No half-day rentals on
-            weekends. No hourly extensions on weekends. Return the vehicle in
-            the same condition as received, except for normal wear and tear.
+            For any inquiries or clarifications, please contact us at johnearlalarcon19@gmail.com or phone 09817407642.
           </p>
         </div>
 

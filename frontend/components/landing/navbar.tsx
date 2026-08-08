@@ -11,12 +11,17 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import { Menu } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import AuthForm from "../auth/auth-form";
 import { useUser } from "@/data/context/user-context";
 import UserButton from "../shared/user-button";
 
 const navLinks = [
+  {
+    label: "Home",
+    href: "/",
+  },
   {
     label: "About",
     href: "#about",
@@ -38,6 +43,7 @@ const navLinks = [
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const { user } = useUser();
 
@@ -53,10 +59,19 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const router = useRouter();
+
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
+
+  const handleNavigate = (href: string) => {
+    startTransition(() => {
+      router.push(href);
+    });
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-orange-200 dark:border-slate-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -92,9 +107,17 @@ const Navbar = () => {
                   {link.href.startsWith("#") ? (
                     <button
                       onClick={() => scrollTo(link.href)}
-                      className=" cursor-pointer text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
+                      className="cursor-pointer text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
                     >
                       {link.label}
+                    </button>
+                  ) : link.href === "/vehicles" ? (
+                    <button
+                      onClick={() => handleNavigate(link.href)}
+                      disabled={isPending}
+                      className="cursor-pointer text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
+                    >
+                      {isPending ? "Loading..." : link.label}
                     </button>
                   ) : (
                     <Link
