@@ -158,8 +158,8 @@ const BookingForm = ({
                   <>
                     <DateTimePickerField
                       id="pickup"
-                      dateLabel="Pick-up Date"
-                      timeLabel="Pick-up Time"
+                      dateLabel="Start Date"
+                      timeLabel="Start Time"
                       value={field.value}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
@@ -178,8 +178,8 @@ const BookingForm = ({
                   <>
                     <DateTimePickerField
                       id="dropoff"
-                      dateLabel="Drop-off Date"
-                      timeLabel="Drop-off Time"
+                      dateLabel="End Date"
+                      timeLabel="End Time"
                       value={field.value}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
@@ -212,7 +212,7 @@ const BookingForm = ({
                 <FieldSelectItem
                   name="delivery_location"
                   control={bookingForm.control}
-                  label="Delivery Location"
+                  label="Deliviry & Pick-up Location"
                   placeholder="Select a delivery location"
                   options={deliveryLocationOptions}
                   renderTrigger={(o) =>
